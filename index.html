@@ -12,6 +12,19 @@
     <a href="about_me.html" class="contact-button">О нас</a>
     <a href="gait.pdf" class="contact-button">Как пользоваться</a>
   </div>
-  
+
+  <div class="safe-zone">
+    <div class="movable block">
+      <button class="delete-button" onclick="Remove(this)">x</button>
+      <script>
+        function Remove(button) 
+        {
+          let i = button.closest('div.block');
+          i.remove();
+        }
+      </script>
+    </div>
+    <script src="scripts/movable.js"></script>
+  </div>
 </body>
 </html>

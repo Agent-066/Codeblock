@@ -1,3 +1,7 @@
+html {
+    overflow: hidden; /*Эта строчка нам нужна*/
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -30,4 +34,42 @@ body {
 .contact-button:hover {
   background-color: #252323;
   transform: scale(1.1);
+}
+
+.movable /*всё что имеет этот класс будет двигаться*/
+{
+  position: absolute;
+  cursor: move;
+  user-select: none; 
+}
+
+.safe-zone /*Сам настроишь safe окно для блоков*/
+{
+  height: 500px;
+  width: 500px;
+  background-color: grey;
+  justify-content: center;
+  align-items: center;
+}
+
+.block { /*просто тест блок*/
+  height: 100px;
+  width: 100px;
+  background-color: rgb(102, 82, 82);
+  border: 2px solid #252323;
+  border-radius: 5px;
+}
+
+.delete-button {
+  background: rgb(47, 47, 47);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.delete-button:hover {
+  background: rgb(255, 107, 107)
 }
