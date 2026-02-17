@@ -20,6 +20,18 @@ body {
 }
 
 .contact-button {
+  padding: 12px 25px;
+  font-size: 1em;
+  color: #ffffff;
+  background-color: #111111;
+  border: none;
+  border-radius: 8px;
+  text-decoration-color:#c93434;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.contact-buttonn {
   display: inline-block;
   padding: 12px 25px;
   font-size: 1em;
@@ -63,14 +75,7 @@ body {
   user-select: none; 
 }
 
-.safe-zone /*Сам настроишь safe окно для блоков*/
-{
-  height: 500px;
-  width: 500px;
-  background-color: grey;
-  justify-content: center;
-  align-items: center;
-}
+
 
 .block { /*просто тест блок*/
   height: 100px;
@@ -92,4 +97,89 @@ body {
 
 .delete-button:hover {
   background: rgb(255, 107, 107)
+}
+
+
+
+/* боковая панель */
+#side-checkbox {
+    display: none;
+}
+.side-panel {
+    position: fixed;
+    z-index: 999999;
+    left: -100%;
+    background: #337AB7;
+    transition: all 0.5s;   
+    width: 25%;
+    height: 100%;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.4);
+    color: #FFF;
+    padding: 40px 20px;
+}
+
+/* Оформление кнопки на странице */
+.side-button-1-wr {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%); 
+}
+.side-button-1 {
+    display: inline-block;
+}
+.side-button-1 .side-b {
+    margin: 10px;
+    text-decoration: none;
+    position: relative;
+    font-size: 20px;
+    line-height: 20px;
+    padding: 12px 30px;
+    color: #FFF;
+    font-weight: bold;
+    text-transform: uppercase; 
+    font-family: 'Roboto', Тahoma, sans-serif;
+    background: #337AB7;
+    cursor: pointer; 
+    border: 2px solid #BFE2FF;
+}
+
+.side-button-1 .side-b:after,
+.side-button-1 .side-b:before {
+    position: absolute;
+    height: 4px;
+    left: 50%;
+    bottom: -6px;
+    content: "";
+    transition: all 280ms ease-in-out;
+    width: 0;
+}
+/* Переключатели кнопки 1 */
+.side-button-1 .side-close {
+    display: none;
+}
+#side-checkbox:checked + .side-panel + .side-button-1-wr .side-button-1 .side-open {
+    display: none;
+}
+#side-checkbox:checked + .side-panel + .side-button-1-wr .side-button-1 .side-close {
+    display: block;
+}
+#side-checkbox:checked + .side-panel {
+    left: 0;
+}
+/* Оформление кнопки на панели */
+.side-button-2 {
+    font-size: 30px;
+    border-radius: 20px;
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    transform: rotate(45deg);
+    color: #BFE2FF;    
+    transition: all 280ms ease-in-out;    
+}
+.side-button-2:hover {
+    transform: rotate(45deg) scale(1.1);    
+    color: #FFF;
 }

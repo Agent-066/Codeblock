@@ -1,5 +1,5 @@
 let el = null;
-let safe = document.querySelector('.safe-zone');
+let safe = document.querySelector('.side-panel');
 let f_D = false;
 let X = 0;
 let Y = 0;

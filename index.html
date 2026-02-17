@@ -13,18 +13,28 @@
     <a href="gait.pdf" class="contact-button">Как пользоваться</a>
   </div>
 
-  <div class="safe-zone">
-    <div class="movable block">
-      <button class="delete-button" onclick="Remove(this)">x</button>
-      <script>
-        function Remove(button) 
-        {
-          let i = button.closest('div.block');
-          i.remove();
-        }
-      </script>
-    </div>
-    <script src="scripts/movable.js"></script>
+  <input type="checkbox" id="side-checkbox" />
+
+  <div class="side-panel">
+    <label class="side-button-2" for="side-checkbox">+</label>	
+    
+      <div class="movable block">
+        <button class="delete-button" onclick="Remove(this)">x</button>
+        <script>
+          function Remove(button) 
+          {
+            let i = button.closest('div.block');
+            i.remove();
+          }
+        </script>
+      </div>
   </div>
+  <script src="scripts/movable.js"></script>
+
+  <div class="side-button-1-wr">
+    <label class="side-button-1" for="side-checkbox">
+      <div class="side-b side-open">Ξ</div>
+    </label>
+  </div>  
 </body>
 </html>
