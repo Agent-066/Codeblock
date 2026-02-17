@@ -1,11 +1,14 @@
-let el = document.querySelector('.movable');
+let el = null;
 let safe = document.querySelector('.safe-zone');
 let f_D = false;
 let X = 0;
 let Y = 0;
-
-    el.addEventListener('mousedown', function(e) 
+    document.addEventListener('mousedown', function(e) 
 {
+    let movable = e.target.closest(".movable");
+    if (!movable) return;
+    el = movable;
+    el.style.cursor = 'move';
     f_D = true;
     X = e.clientX - el.offsetLeft;
     Y = e.clientY - el.offsetTop;
@@ -15,10 +18,9 @@ let Y = 0;
 
 document.addEventListener('mousemove', function(e) 
 {
-    if (!f_D) return;
+    if (!f_D || !el) return;
     let Xi = e.clientX - X;
     let Yi = e.clientY - Y;
-    if (Xi )
     Xi = Math.max(safe.offsetLeft, Math.min(safe.clientWidth + safe.offsetLeft - el.clientWidth, Xi));
     Yi = Math.max(safe.offsetTop, Math.min(safe.clientHeight + safe.offsetTop - el.clientHeight, Yi));
     el.style.left = Xi + 'px';
@@ -27,12 +29,12 @@ document.addEventListener('mousemove', function(e)
 
 document.addEventListener('mouseup', function()
 {
+    if (el) el.style.cursor = 'move';
     f_D = false;
-    el.style.cursor = 'move';
 });
 
 document.addEventListener('mouseleave', function()
 {
+    if (el) el.style.cursor = 'move';
     f_D = false;
-    el.style.cursor = 'move';
 });
