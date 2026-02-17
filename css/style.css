@@ -27,11 +27,31 @@ body {
   background-color: #111111;
   border: none;
   border-radius: 8px;
+  text-decoration-color:#c93434;
   text-decoration: none;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.contact-buttonn {
+  display: inline-block;
+  padding: 12px 25px;
+  font-size: 1em;
+  color: #ffffff;
+  background-color: #111111;
+  border: none;
+  border-radius: 8px;
+  text-decoration: solid underline rgb(0, 255, 234) 1px;
+  text-underline-offset: 0.8em;
+  text-underline-position: auto;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
 .contact-button:hover {
+  background-color: #252323;
+  transform: scale(1.1);
+}
+
+.contact-buttonn:hover {
   background-color: #252323;
   transform: scale(1.1);
 }
