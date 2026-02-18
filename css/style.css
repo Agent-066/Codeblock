@@ -70,7 +70,7 @@ body {
 
 .movable /*всё что имеет этот класс будет двигаться*/
 {
-  position: absolute;
+  position: fixed;
   cursor: move;
   user-select: none; 
 }
@@ -182,4 +182,9 @@ body {
 .side-button-2:hover {
     transform: rotate(45deg) scale(1.1);    
     color: #FFF;
+}
+
+.safe-zone{
+  height: 90%;
+  width: 100%;
 }

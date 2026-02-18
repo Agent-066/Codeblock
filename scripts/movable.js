@@ -1,8 +1,9 @@
 let el = null;
-let safe = document.querySelector('.side-panel');
+let safe = document.querySelector('.safe-zone');
 let f_D = false;
 let X = 0;
 let Y = 0;
+
     document.addEventListener('mousedown', function(e) 
 {
     let movable = e.target.closest(".movable");

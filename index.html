@@ -2,34 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Мой сайт</title>
+<title>НАШ сайт</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="card">
     <!-- Кнопки -->
     <a href="index.html" class="contact-buttonn">Главное</a>
-    <a href="about_me.html" class="contact-button">О нас</a>
-    <a href="gait.pdf" class="contact-button">Как пользоваться</a>
+    <a href="about_me.html" class="contact-button">О НАС</a>
+    <a href="gait.pdf" class="contact-button">Как пользоваться ЭТИМ (Никак)</a>
   </div>
 
   <input type="checkbox" id="side-checkbox" />
 
   <div class="side-panel">
     <label class="side-button-2" for="side-checkbox">+</label>	
-    
-      <div class="movable block">
-        <button class="delete-button" onclick="Remove(this)">x</button>
-        <script>
-          function Remove(button) 
-          {
-            let i = button.closest('div.block');
-            i.remove();
-          }
-        </script>
-      </div>
+
+    <style>
+      .start {
+        background: rgb(255, 255, 255);
+        height: 100px;
+        width: 100px;
+        border: none;
+        margin: 2px;
+        cursor: pointer;
+        font: inherit;
+      }   
+      
+      .end {
+        background: rgb(131, 70, 70);
+        height: 100px;
+        width: 100px;
+        border: none;
+        margin: 2px;
+        cursor: pointer;
+        font: inherit;
+      }
+        </style>
+
+    <button class="start" onclick="start_end()"></button>
+    <button class="" onclick="start_end()"></button>
+
+    <script>
+      function start_end()
+      {
+        let el = document.querySelector(".safe-zone");
+        let par = document.createElement("div");
+        par.className = "movable start";
+        par.textContent = "Start";
+        el.appendChild(par);
+
+        el = el.querySelector(".start")
+        par = document.createElement("div");
+        par.className = "movable end";
+        par.textContent = "End";
+        el.appendChild(par);
+      }
+    </script>
+
+    </div>
   </div>
-  <script src="scripts/movable.js"></script>
+
+  <div class="safe-zone">
+    <script src="scripts/movable.js"></script>
+  </div>
 
   <div class="side-button-1-wr">
     <label class="side-button-1" for="side-checkbox">
