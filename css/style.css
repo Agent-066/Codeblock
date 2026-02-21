@@ -70,36 +70,10 @@ body {
 
 .movable /*всё что имеет этот класс будет двигаться*/
 {
-  position: fixed;
+  position: absolute;
   cursor: move;
   user-select: none; 
 }
-
-
-
-.block { /*просто тест блок*/
-  height: 100px;
-  width: 100px;
-  background-color: rgb(102, 82, 82);
-  border: 2px solid #252323;
-  border-radius: 5px;
-}
-
-.delete-button {
-  background: rgb(47, 47, 47);
-  color: #ffffff;
-  border: none;
-  border-radius: 50%;
-  margin: 2px;
-  cursor: pointer;
-  font: inherit;
-}
-
-.delete-button:hover {
-  background: rgb(255, 107, 107)
-}
-
-
 
 /* боковая панель */
 #side-checkbox {

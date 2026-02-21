@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>НАШ сайт</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/blocks.css">
 </head>
 <body>
   <div class="card">
@@ -13,57 +14,145 @@
     <a href="gait.pdf" class="contact-button">Как пользоваться ЭТИМ (Никак)</a>
   </div>
 
+
   <input type="checkbox" id="side-checkbox" />
 
   <div class="side-panel">
-    <label class="side-button-2" for="side-checkbox">+</label>	
+    <label class="side-button-2" for="side-checkbox">+</label>
+    <div class="variable" onclick="to_sz(this)">
+      variable
+      <button class="delete-button_x">x</button>
+      <!--вводим название переменной -->
+      <input>
+      <button class="out"></button>
+    </div>
 
-    <style>
-      .start {
-        background: rgb(255, 255, 255);
-        height: 100px;
-        width: 100px;
-        border: none;
-        margin: 2px;
-        cursor: pointer;
-        font: inherit;
-      }   
-      
-      .end {
-        background: rgb(131, 70, 70);
-        height: 100px;
-        width: 100px;
-        border: none;
-        margin: 2px;
-        cursor: pointer;
-        font: inherit;
-      }
-        </style>
+    <div class="assignment_operation" onclick="to_sz(this)">
+      assignment_operation
+      <button class="delete-button_x">x</button>
+      <!--1-ый вход (переменная)-->
+      <button class="in"></button>
+      <!--2-ой вход -- то чему будет равняться (переменные/числа/прочее)-->
+      <input>
+      <button class="in"></button>
+      <!--выход-->
+      <button class="out"></button>
+    </div>
 
-    <button class="start" onclick="start_end()"></button>
-    <button class="" onclick="start_end()"></button>
+    <div class="sum" onclick="to_sz(this)">
+      sum
+      <button class="delete-button_x">x</button>
+      <!--1-ый вход (переменные/числа)-->
+      <input>
+      <button class="in"></button>
+      <!--2-ой вход (переменные/числа)-->
+      <input>
+      <button class="in"></button>
+      <!--n-ый выход (проработать скрипт)-->
+      <!--вход-->
+      <button class="out"></button>
+    </div>
 
+    <div class="cout" onclick="to_sz(this)">
+      cout
+      <button class="delete-button_x">x</button>
+      <!--1-ый вход-->
+      <input>
+      <button class="in"></button>
+      <!--2-ой вход-->
+      <input>
+      <button class="in"></button>
+      <!--n-ый вход (проработать скрипт)-->
+    </div>
+
+    <!--клонирование элемента с изменением аргументов и прочей херни + добавление Id в листик-->
     <script>
-      function start_end()
-      {
-        let el = document.querySelector(".safe-zone");
-        let par = document.createElement("div");
-        par.className = "movable start";
-        par.textContent = "Start";
-        el.appendChild(par);
+      var id_list = [];
+      let cur_i = 0;
+      var id_cur = [cur_i];
 
-        el = el.querySelector(".start")
-        par = document.createElement("div");
-        par.className = "movable end";
-        par.textContent = "End";
-        el.appendChild(par);
+      function to_sz(t){
+        var safe_zone = document.querySelector(".safe-zone");
+        let c_t = t.cloneNode(true);
+        c_t.removeAttribute("onclick");
+        c_t.classList.add("movable");
+        safe_zone.append(c_t);
+
+        let out_t = c_t.querySelector(".out")
+        if (out_t) out_t.setAttribute("onclick", "pin_out(this)");
+        
+
+        let in_t = c_t.querySelector(".in")
+        if (in_t) in_t.setAttribute("onclick", "pin_in(this)");
+        
+        let b_t = c_t.querySelector(".delete-button_x")
+        b_t.className = "delete-button";
+        b_t.setAttribute("onclick", "delete_block(this)");
+
+        c_t.id = id_cur[0];
+
+        if (cur_i == id_cur[0]) {
+          id_list.push(id_cur[0]);
+          id_cur.pop();
+          cur_i += 1;
+          id_cur.push(cur_i);
+        }
+        else{
+          id_list.push(id_cur[0]);
+          id_cur.shift();
+        }
       }
     </script>
-
-    </div>
   </div>
 
+
   <div class="safe-zone">
+    <!--Здесь будут РиСоВаТьСя ЛиНиИ-->
+    <svg style="position: absolute; height:  100%; width: 100%;">
+    </svg>
+
+    <!--Удаление блока и id из листа + будут РиСоВаТьСя ЛиНиИ (нет)!!!! (пока что только закрепление 
+    входов и выходов без визуала) + движение элементов-->
+    <script>
+      function delete_block(t){
+        let block = t.parentElement;
+        i = Number(block.id);
+        index = id_list.indexOf(i);
+        id_list.splice(index, 1)
+        id_cur.unshift(i);
+        block.remove();
+      }
+
+      let flag_1 = false;
+      let flag_2 = false;
+      
+      let t_1 = null;
+      let t_2 = null;
+
+      /*Главное in*/
+      function pin_out(t){
+        flag_1 = true;
+        t_1 = t;
+        if (flag_2){
+          flag_2 = false;
+        }
+      }
+
+      function pin_in(t){
+        flag_2 = true;
+        t_2 = t;
+        if (flag_1){
+          if (t_1.closest(".movable").id == t_2.closest(".movable").id) return;
+          let list_data = (t_1.getAttribute("data") || "").split(" ");
+          list_data.push(t_2.closest(".movable").id);
+
+          t_1.setAttribute("data", list_data.join(" "));
+          t_2.setAttribute("data", t_1.closest(".movable").id);
+
+          flag_1 = false;
+        }
+      }
+    </script>
     <script src="scripts/movable.js"></script>
   </div>
 
