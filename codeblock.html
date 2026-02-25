@@ -49,6 +49,7 @@
         <div class="column">
         </div>
         <div class="column">
+          I/F/S/M
           <input style="width: 30px;">
         </div>
         <div class="column">
@@ -59,15 +60,34 @@
 
     <div class="block assignment_operation" onclick="to_sz(this)">
       <div class="top_block">
-        Assignment_operation
+        Set
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
           <button class="in">></button>
+          <button class="in Integer">></button>
         </div>
         <div class="column">
           =
+        </div>
+        <div class="column">
+          <button class="out">></button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="block get" onclick="to_sz(this)">
+      <div class="top_block">
+        Get
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          <input style="width: 30px;">
         </div>
         <div class="column">
           <button class="out">></button>
@@ -99,6 +119,26 @@
       </div>
     </div>
 
+    <div class="block branch" onclick="to_sz(this)">
+      <div class="top_block">
+        Branch (if)
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in Boolean">></button>
+        </div>
+        <div class="column">
+          <br>True</br>
+          <br>False</br>
+        </div>
+        <div class="column">
+          <button class="out">></button>
+          <button class="out">></button>
+        </div>
+      </div>
+    </div>
+
     <div class="block cout" onclick="to_sz(this)">
       <div class="top_block">
         Cout
@@ -106,6 +146,7 @@
       </div>
       <div class="three_columns">
         <div class="column">
+          <button class="in">></button>
           <button class="in String">></button>
         </div>
         <div class="column">
@@ -125,8 +166,12 @@
   <script>
       var safe_zone = document.querySelector(".safe-zone");
       var id_list = [];
-      let cur_i = 0;
+      var cur_i = 0;
       var id_cur = [cur_i];
+
+      //Позже доработаю id кнопок
+      var but_in_id = 0;
+      var but_out_id = 0;
 
       function to_sz(t){
         let c_t = t.cloneNode(true);
@@ -134,11 +179,23 @@
         c_t.classList.add("movable");
         safe_zone.append(c_t);
 
-        let out_t = c_t.querySelector(".out")
-        if (out_t) out_t.setAttribute("onclick", "pin_out(this)");
+        let out_t = c_t.querySelectorAll(".out")
+        if (out_t){
+          for (i of out_t){
+            i.setAttribute("onclick", "pin_out(this)");
+            i.setAttribute("id", "out_" + but_out_id);
+            but_out_id += 1;
+          }
+        }
 
         let in_t = c_t.querySelectorAll(".in")
-        if (in_t){for (i of in_t){ i.setAttribute("onclick", "pin_in(this)");}}
+        if (in_t){
+          for (i of in_t){
+            i.setAttribute("onclick", "pin_in(this)");
+            i.setAttribute("id", "in_" + but_in_id);
+            but_in_id += 1;
+          }
+        }
         
         let b_t = c_t.querySelector(".delete-button_x")
         b_t.className = "delete-button";
@@ -183,8 +240,8 @@
         id_list.splice(id_list.indexOf(i), 1)
         id_cur.unshift(i);
 
-        let linestoRemove = svg.querySelectorAll(`line[connection~="${i}"]`);
-        for (l of linestoRemove){
+        let lines_remove = svg.querySelectorAll('line[conn_block~="' + i + '"]');
+        for (l of lines_remove){
           l.remove();
         }
 
@@ -195,7 +252,6 @@
 
       var flag_1 = false;
       var flag_2 = false;
-      var flag_3 = false;
       
       var t_1 = null;
       var t_2 = null;
@@ -204,8 +260,6 @@
         flag_1 = true;
         flag_3 = true;
         t_1 = t;
-
-        if (!flag_3) return;
 
         i_line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 
@@ -260,21 +314,16 @@
         if (flag_data && !flag_1) {
           delete_data_out(flag_data, flag_data_x);
 
+          svg.querySelector("line[conn_but~=" + t_2.id + "]").remove();
+
           t_2.setAttribute("data", "");
         }
         if (flag_1){
           if (t_1.closest(".movable").id == t_2.closest(".movable").id) return;
 
-          if (flag_data) delete_data_out(flag_data, flag_data_x);
-
-          document.addEventListener("mouseup", function(e){
-            let el = e.target.closest(".in");
-            if (!el){
-              flag_1 = false;
-              flag_2 = false;
-              return
-            }
-          });
+          if (flag_data){
+            delete_data_out(flag_data, flag_data_x)
+          };
 
           let list_data = (t_1.getAttribute("data") || "").split(" ");
           list_data.push(t_2.closest(".movable").id);
@@ -296,9 +345,22 @@
           line.setAttribute("y2", inRect.top + inRect.height/2 - svgRect.top);
           line.setAttribute("stroke-width", 2);
           line.setAttribute("stroke", "white");
-          line.setAttribute("connection", block_1.id + " " + block_2.id);
+          line.setAttribute("conn_block", block_1.id + " " + block_2.id);
+          line.setAttribute("conn_but", t_1.getAttribute("id") + " " + t_2.getAttribute("id"));
 
           svg.append(line);
+
+          mouse_up_1 = function(e){
+            let el = e.target.closest(".in");
+            if (!el){
+              flag_1 = false;
+              flag_2 = false;
+              document.removeEventListener("mouseup", mouse_up_1)
+              return
+            }
+          }
+          
+          document.addEventListener("mouseup", mouse_up_1);
 
           flag_1 = false;
         }

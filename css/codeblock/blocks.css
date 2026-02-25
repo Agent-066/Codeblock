@@ -100,10 +100,16 @@
 }
 
 .Integer {
-  background: rgb(0, 0, 255);
+  background-color: blue;
 }
 .String {
-  background: rgb(255, 0, 255);
+  background-color: violet;
+}
+.Boolean {
+  background-color: red;
+}
+.Float {
+  background-color: green;
 }
 /*Блоки*/
 
@@ -112,7 +118,7 @@
   background: linear-gradient(to bottom, rgba(125, 255, 125, 0.45), rgba(0, 150, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }
 
-.event {
+.event, .get {
   background: linear-gradient(to bottom, rgba(255, 125, 125, 0.45), rgba(195, 0, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }
 

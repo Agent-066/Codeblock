@@ -1,30 +1,24 @@
-let el = null;
-let safe = document.querySelector('.safe-zone');
-let svg = safe.querySelector('svg'); // ссылка на SVG
+let el = null
+let safe = document.querySelector(".safe-zone")
+let svg = safe.querySelector('svg')
 let f_D = false;
 let X = 0;
 let Y = 0;
 
 function updateLinesForBlock(block) {
     let blockId = block.id;
-    let lines = svg.querySelectorAll('line[connection~="' + blockId + '"]');
+    let lines = svg.querySelectorAll('line[conn_block~="' + blockId + '"]');
     lines.forEach(function(line) {
-        let conn = line.getAttribute('connection').split(' ');
+        let conn = line.getAttribute('conn_but').split(' ');
         if (conn.length !== 2) return;
-        let [fromId, toId] = conn;
-        let fromBlock = document.getElementById(fromId);
-        let toBlock = document.getElementById(toId);
-        if (!fromBlock || !toBlock) return;
-
-        let outEl = fromBlock.querySelector('.out');
-        if (!outEl) return;
-
-        let inEl = Array.from(toBlock.querySelectorAll('.in')).find(el => el.getAttribute('data') === fromId);
-        if (!inEl) return;
+        let [from_id, to_id] = conn;
+        let out_el = document.getElementById(from_id);
+        let in_el = document.getElementById(to_id);
+        if (!out_el || !in_el) return;
 
         let svgRect = svg.getBoundingClientRect();
-        let outRect = outEl.getBoundingClientRect();
-        let inRect = inEl.getBoundingClientRect();
+        let outRect = out_el.getBoundingClientRect();
+        let inRect = in_el.getBoundingClientRect();
 
         line.setAttribute('x1', outRect.left + outRect.width/2 - svgRect.left);
         line.setAttribute('y1', outRect.top + outRect.height/2 - svgRect.top);
