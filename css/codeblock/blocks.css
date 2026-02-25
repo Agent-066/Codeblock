@@ -24,62 +24,58 @@
     background: rgb(255, 107, 107)
 }
 
-.out {
-    background: rgb(190, 97, 97);
-    border: none;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    font: inherit;
-}
-
-.out:hover {
-    background: rgb(51, 51, 51)
+.in, .out {
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin: 2px 4px 2px 0;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .in {
-    background: rgb(4, 13, 80);
-    border: none;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    font: inherit;
+  background: #3a6ea5;
 }
 
 .in:hover {
-    background: rgb(51, 51, 51)
+  background: #4d8cd4;
+  transform: scale(1.2);
 }
 
+.out {
+  background: #b84a4a;
+}
+
+.out:hover {
+  background: #d45c5c;
+  transform: scale(1.2);
+}
 /*Блоки*/
 
 #start{
-    background-color: brown;
     margin: 5px;
 }
 
 #end{
-    background-color: brown;
     margin: 5px;
 }
 
 .variable{
-    background-color: brown;
     margin: 5px;
 }
 
 .assignment_operation{
-    background-color: brown;
     margin: 5px;
 }
 
 .sum{
-    background-color: brown;
     margin: 5px;
 }
 
 .cout{
-    background-color: brown;
     margin: 5px;
 }

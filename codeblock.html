@@ -90,10 +90,9 @@
 
         let out_t = c_t.querySelector(".out")
         if (out_t) out_t.setAttribute("onclick", "pin_out(this)");
-        
 
-        let in_t = c_t.querySelector(".in")
-        if (in_t) in_t.setAttribute("onclick", "pin_in(this)");
+        let in_t = c_t.querySelectorAll(".in")
+        if (in_t){for (i of in_t){ i.setAttribute("onclick", "pin_in(this)");}}
         
         let b_t = c_t.querySelector(".delete-button_x")
         b_t.className = "delete-button";
@@ -116,20 +115,36 @@
   <!--Удаление блоков + закрепление ID и + -->
   <script>
       function delete_data_out(flag_data, flag_data_x){
-        let wasd = "[id='" + flag_data + "']";
-        let el = document.querySelector(wasd).querySelector(".out");
-        let list_data = el.getAttribute("data").split(" ");
-        index = list_data.indexOf(flag_data_x);
-        list_data.splice(index, 1);
-        el.setAttribute("data", list_data.join(" "));
+        if (flag_data_x != -1){
+          let el = document.querySelector("[id='" + flag_data + "']").querySelector(".out");
+          let list_data = el.getAttribute("data").split(" ");
+          index = list_data.indexOf(flag_data_x);
+          list_data.splice(index, 1);
+          el.setAttribute("data", list_data.join(" "));}
+        else{
+          buttons = document.querySelectorAll("[data~='"+ i +"']");
+          for (i of buttons){
+            data = i.getAttribute("data").split(" ");
+            data.splice(data.indexOf(flag_data), 1);
+            console.log(data)
+            i.setAttribute("data", data.join(" "))
+          }
+        }
       }
 
       function delete_block(t){
         let block = t.parentElement;
         i = Number(block.id);
-        index = id_list.indexOf(i);
-        id_list.splice(index, 1)
+        id_list.splice(id_list.indexOf(i), 1)
         id_cur.unshift(i);
+
+        let linestoRemove = svg.querySelectorAll(`line[connection~="${i}"]`);
+        for (l of linestoRemove){
+          l.remove();
+        }
+
+        delete_data_out(i, -1);
+        
         block.remove();
       }
 
@@ -174,6 +189,24 @@
           t_1.setAttribute("data", list_data.join(" "));
           t_2.setAttribute("data", t_1.closest(".movable").id);
 
+          
+          block_1 = t_1.parentElement;
+          block_2 = t_2.parentElement;
+
+          line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          let svgRect = svg.getBoundingClientRect();
+          let outRect = t_1.getBoundingClientRect();
+          let inRect = t_2.getBoundingClientRect();
+
+          line.setAttribute("x1", outRect.left + outRect.width/2 - svgRect.left);
+          line.setAttribute("y1", outRect.top + outRect.height/2 - svgRect.top);
+          line.setAttribute("x2", inRect.left + inRect.width/2 - svgRect.left);
+          line.setAttribute("y2", inRect.top + inRect.height/2 - svgRect.top);
+          line.setAttribute("stroke-width", 2);
+          line.setAttribute("stroke", "wheat");
+          line.setAttribute("connection", block_1.id + " " + block_2.id);
+
+          svg.append(line);
           flag_1 = false;
         }
       }
