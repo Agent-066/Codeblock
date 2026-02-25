@@ -55,27 +55,3 @@
   transform: scale(1.2);
 }
 /*Блоки*/
-
-#start{
-    margin: 5px;
-}
-
-#end{
-    margin: 5px;
-}
-
-.variable{
-    margin: 5px;
-}
-
-.assignment_operation{
-    margin: 5px;
-}
-
-.sum{
-    margin: 5px;
-}
-
-.cout{
-    margin: 5px;
-}
