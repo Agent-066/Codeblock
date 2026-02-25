@@ -1,23 +1,64 @@
 /*Прочее*/
 
+.top_block {
+  justify-content: space-between;
+  align-items: center; 
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.three_columns {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;  /* Три равные колонки */
+  gap: 20px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.block{
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(105, 105, 105, 0.45) 45px, transparent 2px, transparent), rgba(27, 27, 27, 0.9);
+  padding-top: 25px;
+  border: 2px solid #4d4f53;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  margin: 10px;
+  padding: 10px 15px 15px 15px;
+  width: 200px;
+  min-height: 100px;
+  gap: 8px;
+}
+
+.block:hover {
+  border-color: #87888b;
+  box-shadow: 0 10px 25px #404143;
+}
+
 .delete-button_x {
-    background: rgb(47, 47, 47);
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    margin: 2px;
-    cursor: pointer;
-    font: inherit;
+  height: 25px;
+  width: 25px;
+  background: rgb(47, 47, 47);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
 }
 
 .delete-button {
-    background: rgb(47, 47, 47);
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    margin: 2px;
-    cursor: pointer;
-    font: inherit;
+  background: rgb(47, 47, 47);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
 }
 
 .delete-button:hover {
@@ -31,6 +72,7 @@
   height: 20px;
   margin: 2px 4px 2px 0;
   cursor: pointer;
+  
   box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
   display: inline-flex;
   align-items: center;
@@ -38,20 +80,42 @@
 }
 
 .in {
-  background: #3a6ea5;
+  background: #ffffff;
 }
 
 .in:hover {
-  background: #4d8cd4;
+  background: #ffffff;
   transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(44, 37, 77)
 }
 
 .out {
-  background: #b84a4a;
+  background: #ffffff;
 }
 
 .out:hover {
-  background: #d45c5c;
+  background: #ffffff;
   transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(88, 42, 42)
+}
+
+.Integer {
+  background: rgb(0, 0, 255);
+}
+.String {
+  background: rgb(255, 0, 255);
 }
 /*Блоки*/
+
+
+.variable, .sum, .assignment_operation {
+  background: linear-gradient(to bottom, rgba(125, 255, 125, 0.45), rgba(0, 150, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
+}
+
+.event {
+  background: linear-gradient(to bottom, rgba(255, 125, 125, 0.45), rgba(195, 0, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
+}
+
+.cout {
+  background: linear-gradient(to bottom, rgba(125, 125, 255, 0.45), rgba(0, 0, 191, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
+}

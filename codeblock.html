@@ -24,54 +24,95 @@
   <div class="side-panel">
     <label class="side-button-2" for="side-checkbox">+</label>
     <div class="block event" onclick="to_sz(this)">
-      <button class="delete-button_x">x</button>
-      Event
-      <button class="out"></button>
+      <div class="top_block">
+        Event
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          Start
+        </div>
+        <div class="column">
+          <button class="out">></button>
+        </div>
+      </div>
     </div>
+
     <div class="block variable" onclick="to_sz(this)">
-      <button class="delete-button_x">x</button>
-      variable
-      <!--вводим название переменной -->
-      <input>
-      <button class="out"></button>
+      <div class="top_block">
+        Variable
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          <input style="width: 30px;">
+        </div>
+        <div class="column">
+          <button class="out">></button>
+        </div>
+      </div>
     </div>
 
     <div class="block assignment_operation" onclick="to_sz(this)">
-      <button class="delete-button_x">x</button>
-      assignment_operation
-      <!--1-ый вход (переменная)-->
-      <button class="in"></button>
-      <!--2-ой вход -- то чему будет равняться (переменные/числа/прочее)-->
-      <input>
-      <button class="in"></button>
-      <!--выход-->
-      <button class="out"></button>
+      <div class="top_block">
+        Assignment_operation
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in">></button>
+        </div>
+        <div class="column">
+          =
+        </div>
+        <div class="column">
+          <button class="out">></button>
+        </div>
+      </div>
     </div>
 
     <div class="block sum" onclick="to_sz(this)">
-      <button class="delete-button_x">x</button>
-      sum
-      <!--1-ый вход (переменные/числа)-->
-      <input>
-      <button class="in"></button>
-      <!--2-ой вход (переменные/числа)-->
-      <input>
-      <button class="in"></button>
-      <!--n-ый выход (проработать скрипт)-->
-      <!--вход-->
-      <button class="out"></button>
+      <div class="top_block">
+        sum
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in Integer Float">></button>
+          +
+          <button class="in Integer Float">></button>
+          +
+          ...
+        </div>
+        <div class="column">
+          <input style="width: 30px;">
+          +
+          <input style="width: 30px;">
+        </div>
+        <div class="column">
+          <button class="out Integer Float">></button>
+        </div>
+      </div>
     </div>
 
     <div class="block cout" onclick="to_sz(this)">
-      <button class="delete-button_x">x</button>
-      cout
-      <!--1-ый вход-->
-      <input>
-      <button class="in"></button>
-      <!--2-ой вход-->
-      <input>
-      <button class="in"></button>
-      <!--n-ый вход (проработать скрипт)-->
+      <div class="top_block">
+        Cout
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in String">></button>
+        </div>
+        <div class="column">
+        </div>
+        <div class="column">
+        </div>
+      </div>
     </div>
   </div>
 
@@ -131,14 +172,13 @@
           for (i of buttons){
             data = i.getAttribute("data").split(" ");
             data.splice(data.indexOf(flag_data), 1);
-            console.log(data)
             i.setAttribute("data", data.join(" "))
           }
         }
       }
 
       function delete_block(t){
-        let block = t.parentElement;
+        let block = t.closest(".movable");
         i = Number(block.id);
         id_list.splice(id_list.indexOf(i), 1)
         id_cur.unshift(i);
@@ -155,13 +195,61 @@
 
       var flag_1 = false;
       var flag_2 = false;
+      var flag_3 = false;
       
       var t_1 = null;
       var t_2 = null;
 
       function pin_out(t){
         flag_1 = true;
+        flag_3 = true;
         t_1 = t;
+
+        if (!flag_3) return;
+
+        i_line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+
+        let svgRect = svg.getBoundingClientRect();
+        let outRect = t_1.getBoundingClientRect();
+        startX = outRect.left + outRect.width/2 - svgRect.left;
+        startY = outRect.top + outRect.height/2 - svgRect.top;
+
+        i_line.setAttribute("x1", startX);
+        i_line.setAttribute("y1", startY);
+        i_line.setAttribute("x2", startX);
+        i_line.setAttribute("y2", startY);
+        i_line.setAttribute("stroke-width", 2);
+        i_line.setAttribute("stroke", "white");
+
+        svg.append(i_line);
+
+        circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("fill", "white");
+        circle.setAttribute("cx", startX);
+        circle.setAttribute("cy", startY);
+        circle.setAttribute("r", 5);
+
+        svg.append(circle);
+
+        mouse_move = function(e){
+          if (!flag_3) return;
+          i_line.setAttribute("x2", e.clientX - svgRect.left);
+          i_line.setAttribute("y2", e.clientY - svgRect.top);
+          circle.setAttribute("cx", e.clientX - svgRect.left)
+          circle.setAttribute("cy", e.clientY - svgRect.top)
+        };
+
+        mouse_up = function(e){
+          flag_3 = false;
+          
+          document.removeEventListener("mousemove", mouse_move);
+          document.removeEventListener("mouseup", mouse_up);
+          circle.remove();
+          i_line.remove();
+        }
+
+        document.addEventListener("mousemove", mouse_move);
+        document.addEventListener("mouseup", mouse_up);
       }
 
       function pin_in(t){
@@ -194,9 +282,8 @@
           t_1.setAttribute("data", list_data.join(" "));
           t_2.setAttribute("data", t_1.closest(".movable").id);
 
-          
-          block_1 = t_1.parentElement;
-          block_2 = t_2.parentElement;
+          block_1 = t_1.closest(".movable");
+          block_2 = t_2.closest(".movable");
           
           line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           let svgRect = svg.getBoundingClientRect();
