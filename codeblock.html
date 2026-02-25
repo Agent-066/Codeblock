@@ -23,17 +23,22 @@
 
   <div class="side-panel">
     <label class="side-button-2" for="side-checkbox">+</label>
-    <div class="block variable" onclick="to_sz(this)">
-      variable
+    <div class="block event" onclick="to_sz(this)">
       <button class="delete-button_x">x</button>
+      Event
+      <button class="out"></button>
+    </div>
+    <div class="block variable" onclick="to_sz(this)">
+      <button class="delete-button_x">x</button>
+      variable
       <!--вводим название переменной -->
       <input>
       <button class="out"></button>
     </div>
 
     <div class="block assignment_operation" onclick="to_sz(this)">
-      assignment_operation
       <button class="delete-button_x">x</button>
+      assignment_operation
       <!--1-ый вход (переменная)-->
       <button class="in"></button>
       <!--2-ой вход -- то чему будет равняться (переменные/числа/прочее)-->
@@ -44,8 +49,8 @@
     </div>
 
     <div class="block sum" onclick="to_sz(this)">
-      sum
       <button class="delete-button_x">x</button>
+      sum
       <!--1-ый вход (переменные/числа)-->
       <input>
       <button class="in"></button>
@@ -58,8 +63,8 @@
     </div>
 
     <div class="block cout" onclick="to_sz(this)">
-      cout
       <button class="delete-button_x">x</button>
+      cout
       <!--1-ый вход-->
       <input>
       <button class="in"></button>
@@ -192,7 +197,7 @@
           
           block_1 = t_1.parentElement;
           block_2 = t_2.parentElement;
-
+          
           line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           let svgRect = svg.getBoundingClientRect();
           let outRect = t_1.getBoundingClientRect();
@@ -203,10 +208,11 @@
           line.setAttribute("x2", inRect.left + inRect.width/2 - svgRect.left);
           line.setAttribute("y2", inRect.top + inRect.height/2 - svgRect.top);
           line.setAttribute("stroke-width", 2);
-          line.setAttribute("stroke", "wheat");
+          line.setAttribute("stroke", "white");
           line.setAttribute("connection", block_1.id + " " + block_2.id);
 
           svg.append(line);
+
           flag_1 = false;
         }
       }
