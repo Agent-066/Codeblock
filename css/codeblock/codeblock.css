@@ -14,7 +14,7 @@
     position: fixed;
     z-index: 999999;
     left: -100%;
-    background: #337AB7;
+    background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
     transition: all 0.5s;   
     width: 25%;
     height: 100%;
@@ -38,14 +38,14 @@
     position: relative;
     font-size: 20px;
     line-height: 20px;
-    padding: 12px 30px;
+    padding: 12px 20px;
     color: #FFF;
     font-weight: bold;
     text-transform: uppercase; 
     font-family: 'Roboto', Тahoma, sans-serif;
-    background: #337AB7;
-    cursor: pointer; 
-    border: 2px solid #BFE2FF;
+    background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);    cursor: pointer; 
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 45%;
 }
 
 .side-button-1 .side-b:after,
