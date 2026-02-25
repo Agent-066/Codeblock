@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<link rel="icon" type="image/png" sizes="32x32" href="image_pdf/ss.jpg">
+<meta charset="UTF-8">
+<!-- Адаптивность  -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>НАШ сайт</title>
+<link rel="stylesheet" href="css/general.css">
+<link rel="stylesheet" href="css/codeblock/codeblock.css">
+<link rel="stylesheet" href="css/codeblock/blocks.css">
+</head>
+<body>
+  <div class="card">
+    <!-- Кнопки -->
+    <a href="codeblock.html" class="contact-buttonn">Главное</a>
+    <a href="about_me.html" class="contact-button">О нас</a>
+    <a href="gaide.pdf" class="contact-button">Как пользоваться ЭТИМ (Никак)</a>
+  </div>
+
+
+  <input type="checkbox" id="side-checkbox" />
+
+  <div class="side-panel">
+    <label class="side-button-2" for="side-checkbox">+</label>
+    <div class="variable" onclick="to_sz(this)">
+      variable
+      <button class="delete-button_x">x</button>
+      <!--вводим название переменной -->
+      <input>
+      <button class="out"></button>
+    </div>
+
+    <div class="assignment_operation" onclick="to_sz(this)">
+      assignment_operation
+      <button class="delete-button_x">x</button>
+      <!--1-ый вход (переменная)-->
+      <button class="in"></button>
+      <!--2-ой вход -- то чему будет равняться (переменные/числа/прочее)-->
+      <input>
+      <button class="in"></button>
+      <!--выход-->
+      <button class="out"></button>
+    </div>
+
+    <div class="sum" onclick="to_sz(this)">
+      sum
+      <button class="delete-button_x">x</button>
+      <!--1-ый вход (переменные/числа)-->
+      <input>
+      <button class="in"></button>
+      <!--2-ой вход (переменные/числа)-->
+      <input>
+      <button class="in"></button>
+      <!--n-ый выход (проработать скрипт)-->
+      <!--вход-->
+      <button class="out"></button>
+    </div>
+
+    <div class="cout" onclick="to_sz(this)">
+      cout
+      <button class="delete-button_x">x</button>
+      <!--1-ый вход-->
+      <input>
+      <button class="in"></button>
+      <!--2-ой вход-->
+      <input>
+      <button class="in"></button>
+      <!--n-ый вход (проработать скрипт)-->
+    </div>
+  </div>
+
+
+  <div class="safe-zone">
+    <svg style="position: absolute; height:  100%; width: 100%;">
+    </svg>
+  </div>
+  <!--Размещение блоков-->
+  <script>
+      var safe_zone = document.querySelector(".safe-zone");
+      var id_list = [];
+      let cur_i = 0;
+      var id_cur = [cur_i];
+
+      function to_sz(t){
+        let c_t = t.cloneNode(true);
+        c_t.removeAttribute("onclick");
+        c_t.classList.add("movable");
+        safe_zone.append(c_t);
+
+        let out_t = c_t.querySelector(".out")
+        if (out_t) out_t.setAttribute("onclick", "pin_out(this)");
+        
+
+        let in_t = c_t.querySelector(".in")
+        if (in_t) in_t.setAttribute("onclick", "pin_in(this)");
+        
+        let b_t = c_t.querySelector(".delete-button_x")
+        b_t.className = "delete-button";
+        b_t.setAttribute("onclick", "delete_block(this)");
+
+        c_t.id = id_cur[0];
+
+        if (cur_i == id_cur[0]) {
+          id_list.push(id_cur[0]);
+          id_cur.pop();
+          cur_i += 1;
+          id_cur.push(cur_i);
+        }
+        else{
+          id_list.push(id_cur[0]);
+          id_cur.shift();
+        }
+      }
+  </script>
+  <!--Удаление блоков + закрепление ID и + -->
+  <script>
+      function delete_data_out(flag_data, flag_data_x){
+        let wasd = "[id='" + flag_data + "']";
+        let el = document.querySelector(wasd).querySelector(".out");
+        let list_data = el.getAttribute("data").split(" ");
+        index = list_data.indexOf(flag_data_x);
+        list_data.splice(index, 1);
+        el.setAttribute("data", list_data.join(" "));
+      }
+
+      function delete_block(t){
+        let block = t.parentElement;
+        i = Number(block.id);
+        index = id_list.indexOf(i);
+        id_list.splice(index, 1)
+        id_cur.unshift(i);
+        block.remove();
+      }
+
+      var flag_1 = false;
+      var flag_2 = false;
+      
+      var t_1 = null;
+      var t_2 = null;
+
+      function pin_out(t){
+        flag_1 = true;
+        t_1 = t;
+      }
+
+      function pin_in(t){
+        flag_2 = true;
+        t_2 = t;
+        flag_data_x = t_2.closest('.movable').id;
+        flag_data = t_2.getAttribute("data");
+        if (flag_data && !flag_1) {
+          delete_data_out(flag_data, flag_data_x);
+
+          t_2.setAttribute("data", "");
+        }
+        if (flag_1){
+          if (t_1.closest(".movable").id == t_2.closest(".movable").id) return;
+
+          if (flag_data) delete_data_out(flag_data, flag_data_x);
+
+          document.addEventListener("mouseup", function(e){
+            let el = e.target.closest(".in");
+            if (!el){
+              flag_1 = false;
+              flag_2 = false;
+              return
+            }
+          });
+
+          let list_data = (t_1.getAttribute("data") || "").split(" ");
+          list_data.push(t_2.closest(".movable").id);
+
+          t_1.setAttribute("data", list_data.join(" "));
+          t_2.setAttribute("data", t_1.closest(".movable").id);
+
+          flag_1 = false;
+        }
+      }
+  </script>
+  <!--Передвижение (очевидно)-->
+  <script src="scripts/movable.js"></script>
+
+
+  <div class="side-button-1-wr">
+    <label class="side-button-1" for="side-checkbox">
+      <div class="side-b side-open">Ξ</div>
+    </label>
+  </div>  
+</body>
+</html>
