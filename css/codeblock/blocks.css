@@ -80,48 +80,50 @@
 }
 
 .in {
-  background: #ffffff;
+  background: #7a769a;
 }
 
 .in:hover {
-  background: #ffffff;
+  background: #7a769a;
   transform: scale(1.2);
   box-shadow: 0 2px 4px rgb(44, 37, 77)
 }
 
 .out {
-  background: #ffffff;
+  background: #946969;
 }
 
 .out:hover {
-  background: #ffffff;
+  background: #946969;
   transform: scale(1.2);
   box-shadow: 0 2px 4px rgb(88, 42, 42)
 }
 
-.Integer {
+button[_type="Exec"] {
+  background-color: white;
+}
+button[_type="Integer"] {
   background-color: blue;
 }
-.String {
+button[-type="String"] {
   background-color: violet;
 }
-.Boolean {
+button[_type="Boolean"] {
   background-color: red;
 }
-.Float {
+button[_type="Float"] {
   background-color: green;
 }
 /*Блоки*/
 
-
-.variable, .sum, .assignment_operation {
+[block_type='variable'], [block_type='sum'], [block_type='assignment_operation'] {
   background: linear-gradient(to bottom, rgba(125, 255, 125, 0.45), rgba(0, 150, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }
 
-.event, .get {
+[block_type='event'], [block_type='get'] {
   background: linear-gradient(to bottom, rgba(255, 125, 125, 0.45), rgba(195, 0, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }
 
-.cout {
+[block_type='cout'] {
   background: linear-gradient(to bottom, rgba(125, 125, 255, 0.45), rgba(0, 0, 191, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }

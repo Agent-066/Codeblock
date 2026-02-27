@@ -23,24 +23,25 @@
 
   <div class="side-panel">
     <label class="side-button-2" for="side-checkbox">+</label>
-    <div class="block event" onclick="to_sz(this)">
+    <div class="block" block_type="event" onclick="to_sz(this)">
       <div class="top_block">
         Event
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
+          <button onclick="event(this)">Start</button>
         </div>
         <div class="column">
           Start
         </div>
         <div class="column">
-          <button class="out">></button>
+          <button class="out" _type="Exec">></button>
         </div>
       </div>
     </div>
 
-    <div class="block variable" onclick="to_sz(this)">
+    <div class="block" block_type="variable" onclick="to_sz(this)">
       <div class="top_block">
         Variable
         <button class="delete-button_x">x</button>
@@ -49,36 +50,45 @@
         <div class="column">
         </div>
         <div class="column">
-          I/F/S/M
-          <input style="width: 30px;">
+          <!--Здесь выбирается тип данных для переменной-->
+          <select>
+            <option>Integer</option>
+            <option>Float</option>
+            <option>String</option>
+            <option selected>Boolean</option>
+          </select>
+          <!--Здесь вводится названия переменным-->
+          <input style="width: 30px;" name="Var">
         </div>
         <div class="column">
-          <button class="out">></button>
+          <!--Тип данных будет зависеть от входных данных на блоке-->
+          <button class="out" _type="Exec">></button>
         </div>
       </div>
     </div>
 
-    <div class="block assignment_operation" onclick="to_sz(this)">
+    <div class="block" block_type="assignment_operation" onclick="to_sz(this)">
       <div class="top_block">
         Set
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in">></button>
-          <button class="in Integer">></button>
+          <button class="in" _type="Exec">></button>
+          <!--Будет зависеть от 1-го входа-->
+          <button class="in" _type="">></button>
+          <button class="in" _type="">></button>
         </div>
         <div class="column">
-          =
         </div>
         <div class="column">
-          <button class="out">></button>
+          <button class="out" _type="Exec">></button>
         </div>
       </div>
 
     </div>
 
-    <div class="block get" onclick="to_sz(this)">
+    <div class="block" block_type="get" onclick="to_sz(this)">
       <div class="top_block">
         Get
         <button class="delete-button_x">x</button>
@@ -87,26 +97,29 @@
         <div class="column">
         </div>
         <div class="column">
-          <input style="width: 30px;">
+          <input style="width: 30px;" list="choose_or_input">
+          <datalist id="choose_or_input">
+            <!--Здесь выбираются переменные-->
+            <option>A</option>
+          </datalist>
         </div>
         <div class="column">
-          <button class="out">></button>
+          <button class="out" _type="Exec">></button>
         </div>
       </div>
     </div>
 
-    <div class="block sum" onclick="to_sz(this)">
+    <div class="block" block_type="sum" onclick="to_sz(this)">
       <div class="top_block">
         sum
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in Integer Float">></button>
+          <button class="in" _type="Integer">></button>
           +
-          <button class="in Integer Float">></button>
-          +
-          ...
+          <button class="in" _type="Integer">></button>
+          <button class="add">+</button>
         </div>
         <div class="column">
           <input style="width: 30px;">
@@ -114,44 +127,62 @@
           <input style="width: 30px;">
         </div>
         <div class="column">
-          <button class="out Integer Float">></button>
+          <button class="out" _type="Integer">></button>
         </div>
       </div>
     </div>
 
-    <div class="block branch" onclick="to_sz(this)">
+    <div class="block" block_type="branch" onclick="to_sz(this)">
       <div class="top_block">
         Branch (if)
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in Boolean">></button>
+          <button class="in" _type="Exec">></button>
+          <button class="in" _type="Boolean">></button>
         </div>
         <div class="column">
           <br>True</br>
           <br>False</br>
         </div>
         <div class="column">
-          <button class="out">></button>
-          <button class="out">></button>
+          <button class="out" _type="Exec">></button>
+          <button class="out" _type="Exec">></button>
         </div>
       </div>
     </div>
 
-    <div class="block cout" onclick="to_sz(this)">
+    <div class="block" block_type="cout" onclick="to_sz(this)">
       <div class="top_block">
         Cout
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in">></button>
-          <button class="in String">></button>
+          <button class="in" _type="Exec">></button>
+          <button class="in" _type="String">></button>
         </div>
         <div class="column">
         </div>
         <div class="column">
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="const" onclick="to_sz(this)">
+      <div class="top_block">
+        Const
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          <input style="width: 30px;" type="text">
+        </div>
+        <div class="column">
+          <button class="out" type="">></button>
         </div>
       </div>
     </div>
@@ -159,9 +190,9 @@
 
 
   <div class="safe-zone">
-    <svg style="position: absolute; height:  100%; width: 100%;">
-    </svg>
+    <svg style="position: absolute; height:  100%; width: 100%;"> </svg>
   </div>
+  <script src="scripts/block_scripts.js"></script>
   <!--Размещение блоков-->
   <script>
       var safe_zone = document.querySelector(".safe-zone");
@@ -213,42 +244,12 @@
           id_list.push(id_cur[0]);
           id_cur.shift();
         }
+
+        add_to_blocks(c_t);
       }
   </script>
   <!--Удаление блоков + закрепление ID и + -->
   <script>
-      function delete_data_out(flag_data, flag_data_x){
-        if (flag_data_x != -1){
-          let el = document.querySelector("[id='" + flag_data + "']").querySelector(".out");
-          let list_data = el.getAttribute("data").split(" ");
-          index = list_data.indexOf(flag_data_x);
-          list_data.splice(index, 1);
-          el.setAttribute("data", list_data.join(" "));}
-        else{
-          buttons = document.querySelectorAll("[data~='"+ i +"']");
-          for (i of buttons){
-            data = i.getAttribute("data").split(" ");
-            data.splice(data.indexOf(flag_data), 1);
-            i.setAttribute("data", data.join(" "))
-          }
-        }
-      }
-
-      function delete_block(t){
-        let block = t.closest(".movable");
-        i = Number(block.id);
-        id_list.splice(id_list.indexOf(i), 1)
-        id_cur.unshift(i);
-
-        let lines_remove = svg.querySelectorAll('line[conn_block~="' + i + '"]');
-        for (l of lines_remove){
-          l.remove();
-        }
-
-        delete_data_out(i, -1);
-        
-        block.remove();
-      }
 
       var flag_1 = false;
       var flag_2 = false;
@@ -286,7 +287,6 @@
         svg.append(circle);
 
         mouse_move = function(e){
-          if (!flag_3) return;
           i_line.setAttribute("x2", e.clientX - svgRect.left);
           i_line.setAttribute("y2", e.clientY - svgRect.top);
           circle.setAttribute("cx", e.clientX - svgRect.left)
@@ -294,8 +294,13 @@
         };
 
         mouse_up = function(e){
-          flag_3 = false;
-          
+          let el = e.target.closest(".in");
+          if (!el){
+            flag_1 = false;
+            flag_2 = false;
+            console.log(true);
+          }
+
           document.removeEventListener("mousemove", mouse_move);
           document.removeEventListener("mouseup", mouse_up);
           circle.remove();
@@ -308,31 +313,43 @@
 
       function pin_in(t){
         flag_2 = true;
+
         t_2 = t;
-        flag_data_x = t_2.closest('.movable').id;
-        flag_data = t_2.getAttribute("data");
-        if (flag_data && !flag_1) {
-          delete_data_out(flag_data, flag_data_x);
+        
+        block_1 = blocks.find(itm => itm.id == t_1.closest(".movable").id);
+        block_2 = blocks.find(itm => itm.id == t_2.closest(".movable").id);
+
+        t_1_b = block_1.output.find(itm => itm.id == t_1.id);
+        t_2_b = block_2.input.find(itm => itm.id == t_2.id);
+        
+        flag_conn = false;
+
+        block_2.input.forEach(itm_0 => { 
+          itm_0.connection.forEach(itm_1 => {
+            if (itm_1.to == t_2.id) {
+              flag_conn = true;
+            }
+          })
+        });
+
+        if (flag_conn && !flag_1) {
+          delete_connection([t_2.id], false);
 
           svg.querySelector("line[conn_but~=" + t_2.id + "]").remove();
-
-          t_2.setAttribute("data", "");
         }
         if (flag_1){
-          if (t_1.closest(".movable").id == t_2.closest(".movable").id) return;
+          if (t_2_b.type != t_1_b.type) return;
 
-          if (flag_data){
-            delete_data_out(flag_data, flag_data_x)
-          };
+          if (flag_conn){
+            delete_connection([t_2.id], false);
+            
+            svg.querySelector("line[conn_but~=" + t_2.id + "]").remove();
+          }
 
-          let list_data = (t_1.getAttribute("data") || "").split(" ");
-          list_data.push(t_2.closest(".movable").id);
+          if (block_1.id == block_2.id) return;
 
-          t_1.setAttribute("data", list_data.join(" "));
-          t_2.setAttribute("data", t_1.closest(".movable").id);
-
-          block_1 = t_1.closest(".movable");
-          block_2 = t_2.closest(".movable");
+          t_1_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id})
+          t_2_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id})
           
           line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           let svgRect = svg.getBoundingClientRect();
@@ -349,18 +366,6 @@
           line.setAttribute("conn_but", t_1.getAttribute("id") + " " + t_2.getAttribute("id"));
 
           svg.append(line);
-
-          mouse_up_1 = function(e){
-            let el = e.target.closest(".in");
-            if (!el){
-              flag_1 = false;
-              flag_2 = false;
-              document.removeEventListener("mouseup", mouse_up_1)
-              return
-            }
-          }
-          
-          document.addEventListener("mouseup", mouse_up_1);
 
           flag_1 = false;
         }
