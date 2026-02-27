@@ -9,18 +9,44 @@
 
       function to_sz(t){
         let c_t = t.cloneNode(true);
-        c_t.removeAttribute("onclick");
+        c_t.classList.remove("movable");
         c_t.classList.add("movable");
+        c_t.removeAttribute("onclick");
         safe_zone.append(c_t);
 
-        let out_t = c_t.querySelectorAll(".out")
-        if (out_t){
-          for (i of out_t){
-            i.setAttribute("onclick", "pin_out(this)");
+        let out_t = c_t.querySelectorAll(".out");
+        if (out_t.length > 0) {
+          for (let i of out_t) {
+            i.setAttribute("data-id", "out_" + but_out_id);
             i.setAttribute("id", "out_" + but_out_id);
+            // Используем onlick вместо setAttribute
+            i.onclick = function(e) {
+              e.stopPropagation();
+              pin_out(this);
+            };
             but_out_id += 1;
           }
         }
+
+        let selects = c_t.querySelectorAll("select");
+        selects.forEach(select => {
+          select.onclick = function(e) {
+            e.stopPropagation();
+          };
+          select.onmousedown = function(e) {
+            e.stopPropagation();
+          };
+        });
+
+        let inputs = c_t.querySelectorAll("input");
+        inputs.forEach(input => {
+          input.onclick = function(e) {
+            e.stopPropagation();
+          };
+          input.onmousedown = function(e) {
+            e.stopPropagation();
+          };
+        });
 
         let in_t = c_t.querySelectorAll(".in")
         if (in_t){

@@ -23,7 +23,7 @@
 
   <div class="side-panel">
     <label class="side-button-2" for="side-checkbox">+</label>
-    <div class="block" block_type="event" onclick="to_sz(this)">
+    <div class="block" block_type="event">
       <div class="top_block">
         Event
         <button class="delete-button_x">x</button>
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="variable" onclick="to_sz(this)">
+    <div class="block" block_type="variable" >
       <div class="top_block">
         Variable
         <button class="delete-button_x">x</button>
@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="assignment_operation" onclick="to_sz(this)">
+    <div class="block" block_type="assignment_operation" >
       <div class="top_block">
         Set
         <button class="delete-button_x">x</button>
@@ -88,7 +88,7 @@
 
     </div>
 
-    <div class="block" block_type="get" onclick="to_sz(this)">
+    <div class="block" block_type="get" >
       <div class="top_block">
         Get
         <button class="delete-button_x">x</button>
@@ -109,7 +109,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="sum" onclick="to_sz(this)">
+    <div class="block" block_type="sum" >
       <div class="top_block">
         sum
         <button class="delete-button_x">x</button>
@@ -132,7 +132,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="branch" onclick="to_sz(this)">
+    <div class="block" block_type="branch" >
       <div class="top_block">
         Branch (if)
         <button class="delete-button_x">x</button>
@@ -153,7 +153,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="cout" onclick="to_sz(this)">
+    <div class="block" block_type="cout" >
       <div class="top_block">
         Cout
         <button class="delete-button_x">x</button>
@@ -170,7 +170,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="const" onclick="to_sz(this)">
+    <div class="block" block_type="const" >
       <div class="top_block">
         Const
         <button class="delete-button_x">x</button>
@@ -200,7 +200,18 @@
   <script src="scripts/id_block.js"></script>
   <!--Передвижение (очевидно)-->
   <script src="scripts/movable.js"></script>
-
+  <!--Игнорируем клики по кнопкам внутри блока-->
+  <script>
+    document.querySelectorAll(".side-panel .block").forEach(block => {
+        block.addEventListener("click", function(e) {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'OPTION') {
+                 return;
+            }
+            to_sz(this);
+        });
+    });
+  </script>
+  
   <div class="side-button-1-wr">
     <label class="side-button-1" for="side-checkbox">
       <div class="side-b side-open">Ξ</div>
