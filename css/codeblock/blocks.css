@@ -35,8 +35,8 @@
 }
 
 .block:hover {
-  border-color: #87888b;
-  box-shadow: 0 10px 25px #404143;
+  border-color: #ffd800;
+  box-shadow: 0 10px 25px #56543b;
 }
 
 .delete-button_x {
@@ -52,8 +52,8 @@
 }
 
 .delete-button {
-  background: rgb(47, 47, 47);
   color: #ffffff;
+  background: rgb(47, 47, 47);
   border: none;
   border-radius: 50%;
   margin: 2px;
@@ -105,7 +105,7 @@ button[_type="Exec"] {
 button[_type="Integer"] {
   background-color: blue;
 }
-button[-type="String"] {
+button[_type="String"] {
   background-color: violet;
 }
 button[_type="Boolean"] {
@@ -116,7 +116,7 @@ button[_type="Float"] {
 }
 /*Блоки*/
 
-[block_type='variable'], [block_type='sum'], [block_type='assignment_operation'] {
+[block_type='variable'], [block_type='sum'], [block_type='set'] {
   background: linear-gradient(to bottom, rgba(125, 255, 125, 0.45), rgba(0, 150, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }
 

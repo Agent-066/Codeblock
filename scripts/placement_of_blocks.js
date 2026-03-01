@@ -6,6 +6,7 @@
       //Позже доработаю id кнопок
       var but_in_id = 0;
       var but_out_id = 0;
+      var blk_input_id = 0;
 
       function to_sz(t){
         let c_t = t.cloneNode(true);
@@ -36,26 +37,27 @@
           select.onmousedown = function(e) {
             e.stopPropagation();
           };
-        });
 
-        let inputs = c_t.querySelectorAll("input");
-        inputs.forEach(input => {
-          input.onclick = function(e) {
-            e.stopPropagation();
-          };
-          input.onmousedown = function(e) {
-            e.stopPropagation();
-          };
+          select.addEventListener("change", function(){
+            type = this.value;
+            block = this.closest(".movable");
+            block_info = blocks.find(itm => itm.id == block.id);
+
+            block_info.data.select = type;
+            variables.find(itm => itm.id_block == block.id).type = type;
+            block_info.output[0].type = type;
+            out = block.querySelector(".out");
+            out.setAttribute("_type", type)
+          })
         });
 
         let in_t = c_t.querySelectorAll(".in")
-        if (in_t){
-          for (i of in_t){
-            i.setAttribute("onclick", "pin_in(this)");
-            i.setAttribute("id", "in_" + but_in_id);
+        in_t.forEach(itm => {
+            if (itm.getAttribute("_type") == "") itm.setAttribute("flag_ch", true);
+            itm.setAttribute("onclick", "pin_in(this)");
+            itm.setAttribute("id", "in_" + but_in_id);
             but_in_id += 1;
-          }
-        }
+        }); 
         
         let b_t = c_t.querySelector(".delete-button_x")
         b_t.className = "delete-button";
@@ -75,4 +77,50 @@
         }
 
         add_to_blocks(c_t);
+
+        if (c_t.getAttribute("block_type") == "variable"){variables.push({id_block: c_t.id, name: null, type: "Boolean", value: null})}
+
+        let inputs = c_t.querySelectorAll("input");
+        inputs.forEach(input => {
+          input.onclick = function(e) {
+            e.stopPropagation();
+          };
+          input.onmousedown = function(e) {
+            e.stopPropagation();
+          };
+
+          input.setAttribute("id", "input_" + blk_input_id);
+          blk_input_id += 1;
+
+          input.addEventListener("input", function(e){
+            i_block = blocks.find(itm => itm.id == e.target.closest(".movable").id)
+
+            if (i_block.data.input !== undefined){
+              i_block.data.input = e.target.value;
+            }
+            if (i_block.data.varname !== undefined){
+              i_block.data.varname = e.target.value;
+              if (i_block.type == "variable") {
+              variable = variables.find(itm => itm.id_block == i_block.id)
+                if (variable){
+                  variable.name = i_block.data.varname;
+                  update_datalist();
+                }
+              }
+            }
+            if (i_block.type == "get"){
+              let block = document.getElementById(i_block.id)
+              
+              let flag = false;
+              variables.forEach(itm => {
+                if (itm.name == e.target.value) {
+                  flag = true;
+                  block.querySelector(".out").setAttribute("_type", itm.type)
+                  i_block.output[0].type = itm.type;
+                  return;
+                }
+              });
+            }
+          });
+        });
       }

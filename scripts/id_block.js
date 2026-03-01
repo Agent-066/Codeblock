@@ -1,6 +1,5 @@
 
       var flag_1 = false;
-      var flag_2 = false;
       
       var t_1 = null;
       var t_2 = null;
@@ -9,6 +8,14 @@
         flag_1 = true;
         flag_3 = true;
         t_1 = t;
+
+        block_1 = blocks.find(itm => itm.id == t_1.closest(".movable").id)
+        te = block_1.output.find(itm => itm.id == t_1.id);
+        if (te.type == "Exec" && te.connection.length != 0){
+          if (svg.querySelector("line[conn_but~=" + t_1.id + "]")) svg.querySelector("line[conn_but~=" + t_1.id + "]").remove();
+          delete_connection(false, [t_1.id]);
+          block_1.Exec.splice(block_1.Exec.findIndex(itm => itm == te.connection.to_block), 1);
+        }
 
         i_line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 
@@ -45,8 +52,6 @@
           let el = e.target.closest(".in");
           if (!el){
             flag_1 = false;
-            flag_2 = false;
-            console.log(true);
           }
 
           document.removeEventListener("mousemove", mouse_move);
@@ -60,14 +65,11 @@
       }
 
       function pin_in(t){
-        flag_2 = true;
 
         t_2 = t;
         
-        block_1 = blocks.find(itm => itm.id == t_1.closest(".movable").id);
         block_2 = blocks.find(itm => itm.id == t_2.closest(".movable").id);
 
-        t_1_b = block_1.output.find(itm => itm.id == t_1.id);
         t_2_b = block_2.input.find(itm => itm.id == t_2.id);
         
         flag_conn = false;
@@ -83,21 +85,41 @@
         if (flag_conn && !flag_1) {
           delete_connection([t_2.id], false);
 
+          if (t_2.getAttribute("flag_ch") == "true") {t_2.setAttribute("_type", ""); t_2_b.type = ""}; 
+          
+          if (svg.querySelector("line[conn_but~=" + t_2.id + "]")){
           svg.querySelector("line[conn_but~=" + t_2.id + "]").remove();
+          }
         }
         if (flag_1){
-          if (t_2_b.type != t_1_b.type) return;
+          block_1 = blocks.find(itm => itm.id == t_1.closest(".movable").id);
+
+          t_1_b = block_1.output.find(itm => itm.id == t_1.id);
+
+          if ((t_2_b.type != t_1_b.type) ^  t_2_b.type == "" || t_2_b.type == "" && t_1_b.type == "Exec") {
+            flag_1 = false;
+            return
+          };
+
+          if (t_2_b.type == "") {
+            t_2_b.type = t_1_b.type;
+            t_2.setAttribute("_type", t_1_b.type)
+          }
 
           if (flag_conn){
             delete_connection([t_2.id], false);
             
+            if (svg.querySelector("line[conn_but~=" + t_2.id + "]")){
             svg.querySelector("line[conn_but~=" + t_2.id + "]").remove();
+            }
           }
 
           if (block_1.id == block_2.id) return;
 
-          t_1_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id})
-          t_2_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id})
+          t_1_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id});
+          t_2_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id});
+
+          if (t_1_b.type == "Exec") block_1.Exec.push(block_2.id);
           
           line = document.createElementNS("http://www.w3.org/2000/svg", "line");
           let svgRect = svg.getBoundingClientRect();

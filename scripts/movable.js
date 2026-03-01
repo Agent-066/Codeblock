@@ -32,9 +32,12 @@ document.addEventListener('mousedown', function(e) {
     if (!movable) return;
     el = movable;
     el.style.cursor = 'move';
+
+    let elRect = el.getBoundingClientRect();
+
     f_D = true;
-    X = e.clientX - el.offsetLeft;
-    Y = e.clientY - el.offsetTop;
+    X = e.clientX - elRect.left;
+    Y = e.clientY - elRect.top;
     el.style.cursor = 'grabbing';
     e.preventDefault();
 });
@@ -43,8 +46,12 @@ document.addEventListener('mousemove', function(e) {
     if (!f_D || !el) return;
     let Xi = e.clientX - X;
     let Yi = e.clientY - Y;
-    Xi = Math.max(safe.offsetLeft, Math.min(safe.clientWidth + safe.offsetLeft - el.clientWidth, Xi));
-    Yi = Math.max(safe.offsetTop, Math.min(safe.clientHeight + safe.offsetTop - el.clientHeight, Yi));
+
+    let safeRect = safe.getBoundingClientRect();
+    let elRect = el.getBoundingClientRect();
+
+    Xi = Math.max(safeRect.left, Math.min(safeRect.width + safeRect.left - elRect.width, Xi)) - 10;
+    Yi = Math.max(safeRect.top, Math.min(safeRect.height + safeRect.top - elRect.height, Yi)) - 10;
     el.style.left = Xi + 'px';
     el.style.top = Yi + 'px';
 

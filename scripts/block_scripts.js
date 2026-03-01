@@ -1,44 +1,40 @@
 //Кидаем в to_sz()
 
+variables = [];
 blocks = [];
 
-function delete_connection(in_ids, out_ids){
-    from = 'from';
-    to = 'to';
+function delete_connection(in_ids, out_ids) {
+    if (in_ids === false && out_ids === false) return;
 
-    if (out_ids == false && in_ids == false) return;
-    else{
-        if (out_ids == false) out_ids = in_ids; from = to;
-        if (in_ids == false) in_ids = out_ids; to = from;
-    }
+    const inList = Array.isArray(in_ids) ? in_ids : [];
+    const outList = Array.isArray(out_ids) ? out_ids : [];
 
-    blocks.forEach(itm_0 => {
-        itm_0.input.forEach(itm_1 => {
-            if (itm_1.connection){
-                itm_1.connection = itm_1.connection.filter(c => !in_ids.includes(c[to]))
+    blocks.forEach(block => {
+        block.input.forEach(inp => {
+            if (inp.connection) {
+                inp.connection = inp.connection.filter(conn => !inList.includes(conn.to));
             }
-        })
+        });
 
-        itm_0.output.forEach(itm_1 => {
-            if (itm_1.connection){
-                itm_1.connection = itm_1.connection.filter(c => !out_ids.includes(c[from]))
+        block.output.forEach(out => {
+            if (out.connection) {
+                out.connection = out.connection.filter(conn => !outList.includes(conn.from));
             }
-        })
+        });
     });
 }
 
 function delete_block(t){
-    let block = t.closest(".movable");
+    let block = t.parentElement.parentElement;
     i = Number(block.id);
+
+    block_info = blocks.find(itm => itm.id == i);
 
     id_list.splice(id_list.indexOf(i), 1)
     id_cur.unshift(i);
 
     let lines_remove = svg.querySelectorAll('line[conn_block~="' + i + '"]');
     for (l of lines_remove) l.remove();
-        
-    ind = blocks.findIndex(itm => itm.id == i);
-    if (ind == -1) return;
 
     in_ids = [];
     out_ids = [];
@@ -48,6 +44,18 @@ function delete_block(t){
     for (itm of outs) out_ids.push(itm.id);
 
     delete_connection(in_ids, out_ids);
+
+    if (block_info.type == "variable"){
+        idx = variables.findIndex(itm => itm.name == block_info.varname);
+        variables.splice(idx, 1);
+    };
+
+    blocks.forEach(itm_0 => {
+        flag = itm_0.Exec.find(itm_1 => itm_1 == i);
+        if (flag){
+            itm_0.Exec.splice(itm_0.Exec.findIndex(itm_2 => itm_2 == i), 1);
+        }
+    })
 
     blocks.splice(i, 1);
 
@@ -59,6 +67,7 @@ function add_to_blocks(th){
     out_id = [];
     all_in = th.querySelectorAll(".in");
     all_out = th.querySelectorAll(".out");
+    all_inputs = th.querySelectorAll("input");
 
     for (i of all_in){in_id.push({id: i.id, type: i.getAttribute("_type"), connection: []})};
 
@@ -72,16 +81,16 @@ function add_to_blocks(th){
             data = {};
             break;
         case "variable":
-            data = {varname: null};
+            data = {varname: null, select: "Boolean"};
             break;
-        case "assignment_operation":
+        case "set":
             data = {input: null};
             break;
         case "get":
             data = {varname: null};
             break;
         case "sum":
-            data = {input_0: null, input_1: null};
+            data = [];
             break;
         case "branch":
             data = {};
@@ -90,46 +99,127 @@ function add_to_blocks(th){
             data = {};
             break;
         case "const":
-            data = {value: null};
+            data = {input: null};
             break;
     }
 
     blocks.push({
         id: th.id,
         type: type,
-        ExecOut: [],
+        Exec: [],
         input: in_id,
         output: out_id,
         data: data
     })
 }
 
-function go_to(id){
+function go_to(id_to, id_from){
+    if (id_to == undefined) {console.error("Не подсоединен блок c id " + id_from); return;}
 
+    block = blocks.find(itm => itm.id == id_to);
+    console.log(block)
+
+    functions[block.type]?.(id_to);
 }
 
-//Здесь всё начинается
-function event(th){
-    movable = th.closest(".movable");
-    if (!movable) return;
-    
-    blocks.find(itm => itm.id == movable.id)
+function reverse_go_to(blockId, visited = new Set()) {
+    if (visited.has(blockId)) {
+        console.warn('Обнаружен цикл в графе данных для блока с id', blockId);
+        return null;
+    }
+    visited.add(blockId);
 
-    go_to(id);
+    const block = blocks.find(b => b.id == blockId);
+    if (!block) return null;
+
+    const inputValues = [];
+    for (const inp of block.input) {
+        if (inp.type === 'Exec') continue;
+
+        if (inp.connection.length === 0) {
+            inputValues.push(undefined);
+            continue;
+        }
+
+        const conn = inp.connection[0];
+        const sourceBlockId = conn.from_block;
+        const sourceOutId = conn.from;
+
+        const sourceValue = reverse_go_to(sourceBlockId, visited);
+        if (sourceValue === undefined) {
+            console.error('Не удалось вычислить значение для блока с id', sourceBlockId);
+            inputValues.push(undefined);
+        } else {
+            const sourceBlock = blocks.find(b => b.id == sourceBlockId);
+            const outPin = sourceBlock.output.find(o => o.id == sourceOutId);
+            if (outPin && functions[sourceBlock.type]) {
+                const val = functions[sourceBlock.type](sourceBlockId, sourceValue, outPin.type);
+                inputValues.push(val);
+            } else {
+                inputValues.push(undefined);
+            }
+        }
+    }
+    return inputValues;
 }
-//Задаём переменную и её тип
-function variable(th){
+
+functions = {
+    event: (id) => {
+        block = blocks.find(itm => itm.id == id);
+
+        go_to(block.Exec[0], id);
+    },
     
-}
-//Задаём значение переменной
-function set(th){
-    
-}
-//Вывод
-function cout(th){
-    
-}
-//Получить данные переменной
-function get(th){
-    
+    variable: (id) => {
+        block = blocks.find(itm => itm.id == id);
+        info = variables.find(itm => itm.id_block == id)
+
+        return info ? info.name : null;
+    },
+
+    set: (id) => {
+        _block = blocks.find(itm => itm.id == id);
+        input_value_ = reverse_go_to(id, new Set());
+
+        console.log(input_value_);
+
+        [Name, value] = input_value_;
+        info = variables.find(itm => itm.name == Name);
+        if (info) info.value = value;
+        console.log(info);
+
+        go_to(_block.Exec[0], id);
+    },
+
+    cout: (id) => {
+        block = blocks.find(itm => itm.id == id);
+
+        value = reverse_go_to(id, new Set())[0];
+
+        console.log(value)
+    },
+
+    get: (id) => {
+        block = blocks.find(itm => itm.id == id);
+        Name = block.data.varname;
+        info = variables.find(itm => itm.name == Name);
+
+        console.log(block, Name, info)
+
+        return info ? info.value : null;
+    },
+
+    const: (id) => {
+        block = blocks.find(itm => itm.id == id);
+
+        block.data.input = Number(block.data.input) //костыль
+
+        return block.data.input;
+    },
+
+    sum: (id, values) => {
+        [a, b] = values;
+
+        return a + b;
+    }
 }

@@ -30,7 +30,12 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button onclick="event(this)">Start</button>
+          <button onclick="OOOKEEEY_LEETS_GOOO(this.closest('.movable').id)">Start</button>
+          <script>
+            function OOOKEEEY_LEETS_GOOO(th){
+              functions["event"]?.(th);
+            }
+          </script>
         </div>
         <div class="column">
           Start
@@ -62,12 +67,12 @@
         </div>
         <div class="column">
           <!--Тип данных будет зависеть от входных данных на блоке-->
-          <button class="out" _type="Exec">></button>
+          <button class="out" _type="Boolean">></button>
         </div>
       </div>
     </div>
 
-    <div class="block" block_type="assignment_operation" >
+    <div class="block" block_type="set" >
       <div class="top_block">
         Set
         <button class="delete-button_x">x</button>
@@ -97,14 +102,28 @@
         <div class="column">
         </div>
         <div class="column">
-          <input style="width: 30px;" list="choose_or_input">
+          <input style="width: 50px;" list="choose_or_input">
           <datalist id="choose_or_input">
-            <!--Здесь выбираются переменные-->
-            <option>A</option>
           </datalist>
+          <script>
+            function update_datalist() {
+              const datalist = document.getElementById('choose_or_input');
+              if (!datalist) return;
+
+              datalist.innerHTML = '';
+  
+              variables.forEach(variable => {
+                if (variable.name) {
+                  const option = document.createElement('option');
+                  option.value = variable.name;
+                  datalist.appendChild(option);
+                }
+              });
+            }
+          </script>
         </div>
         <div class="column">
-          <button class="out" _type="Exec">></button>
+          <button class="out" _type="">></button>
         </div>
       </div>
     </div>
@@ -161,7 +180,7 @@
       <div class="three_columns">
         <div class="column">
           <button class="in" _type="Exec">></button>
-          <button class="in" _type="String">></button>
+          <button class="in" _type="">></button>
         </div>
         <div class="column">
         </div>
@@ -182,7 +201,7 @@
           <input style="width: 30px;" type="text">
         </div>
         <div class="column">
-          <button class="out" type="">></button>
+          <button class="out" _type="Integer">></button>
         </div>
       </div>
     </div>
