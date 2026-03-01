@@ -114,7 +114,10 @@
             }
           }
 
-          if (block_1.id == block_2.id) return;
+          if (block_1.id == block_2.id){
+            flag_1 = false;
+            return;
+          };
 
           t_1_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id});
           t_2_b.connection.push({from: t_1.id, to: t_2.id, from_block: block_1.id, to_block: block_2.id});
