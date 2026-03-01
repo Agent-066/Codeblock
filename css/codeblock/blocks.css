@@ -116,7 +116,7 @@ button[_type="Float"] {
 }
 /*Блоки*/
 
-[block_type='variable'], [block_type='sum'], [block_type='set'] {
+[block_type='variable'], [block_type='sum'], [block_type='multiplication']{
   background: linear-gradient(to bottom, rgba(125, 255, 125, 0.45), rgba(0, 150, 0, 0.45) 45px, transparent 5px, transparent), rgba(27, 27, 27, 0.9);
 }
 

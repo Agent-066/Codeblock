@@ -9,6 +9,8 @@
     display: none;
 }
 .side-panel {
+    overflow-y: auto;
+    box-sizing: border-box;  
     position: fixed;
     z-index: 999999;
     left: -100%;
@@ -18,7 +20,7 @@
     height: 100%;
     box-shadow: 10px 0 20px rgba(0,0,0,0.4);
     color: #FFF;
-    padding: 40px 20px;
+    padding: 20px 10px;
 }
 
 /* Оформление кнопки на странице */

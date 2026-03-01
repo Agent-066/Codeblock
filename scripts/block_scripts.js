@@ -3,6 +3,35 @@
 variables = [];
 blocks = [];
 
+function add_inputs(blockEl) {
+    let block = blocks.find(b => b.id == blockEl.id);
+    if (!block || block.type != 'sum' && block.type != 'multiplication') return;
+    let left_col = blockEl.querySelector('.three_columns .column:first-child');
+    let right_col = blockEl.querySelector('.three_columns .column:nth-child(2)');
+    let add = blockEl.querySelector('.add');
+    if (!left_col || !right_col || !add) return;
+
+    let in_b = document.createElement('button');
+    in_b.className = 'in';
+    in_b.setAttribute('_type', 'Integer');
+    in_b.setAttribute('onclick', 'pin_in(this)');
+    in_b.id = 'in_' + but_in_id++;
+    left_col.insertBefore(in_b, add);
+
+    let inp = document.createElement('input');
+    inp.style.width = '50px';
+    inp.style.margin = '1.4px';
+    inp.id = 'input_' + blk_input_id++;
+    inp.onclick = function(e) { e.stopPropagation(); };
+    inp.onmousedown = function(e) { e.stopPropagation(); };
+    inp.addEventListener('input', funct_input);
+    right_col.appendChild(inp);
+
+    if (!Array.isArray(block.data)) block.data = [];
+    block.data.push(null);
+    block.input.push({ id: in_b.id, type: 'Integer', connection: [] });
+}
+
 function delete_connection(in_ids, out_ids) {
     if (in_ids === false && out_ids === false) return;
 
@@ -101,6 +130,9 @@ function add_to_blocks(th){
         case "const":
             data = {input: null};
             break;
+        case "multiplication":
+            data = []
+            break;
     }
 
     blocks.push({
@@ -117,7 +149,6 @@ function go_to(id_to, id_from){
     if (id_to == undefined) {console.error("Не подсоединен блок c id " + id_from); return;}
 
     block = blocks.find(itm => itm.id == id_to);
-    console.log(block)
 
     functions[block.type]?.(id_to);
 }
@@ -181,21 +212,20 @@ functions = {
         _block = blocks.find(itm => itm.id == id);
         input_value_ = reverse_go_to(id, new Set());
 
-        console.log(input_value_);
-
         [Name, value] = input_value_;
         info = variables.find(itm => itm.name == Name);
         if (info) info.value = value;
-        console.log(info);
 
         go_to(_block.Exec[0], id);
     },
 
     cout: (id) => {
-        block = blocks.find(itm => itm.id == id);
+        block_info = blocks.find(itm => itm.id == id);
+        _block = document.getElementById(block_info.id);
 
         value = reverse_go_to(id, new Set())[0];
 
+        _block.querySelector("input").setAttribute("value", value);
         console.log(value)
     },
 
@@ -203,8 +233,6 @@ functions = {
         block = blocks.find(itm => itm.id == id);
         Name = block.data.varname;
         info = variables.find(itm => itm.name == Name);
-
-        console.log(block, Name, info)
 
         return info ? info.value : null;
     },
@@ -218,8 +246,41 @@ functions = {
     },
 
     sum: (id, values) => {
-        [a, b] = values;
+        block = blocks.find(b => b.id == id);
+        data = block.data || [];
+        let t = 0;
+        for (let i = 0; i < values.length; i++) {
+            let val = values[i];
+            if (val === undefined) {
+                if (data !== undefined){
+                    val = parseFloat(data[i]);
+                }
+                else val = 0;
+            }
+            else val = parseFloat(val);
+            if (isNaN(val)) t += 0;
+            else t += val;
+        }
+        return t;
+    },
 
-        return a + b;
-    }
+    multiplication: (id, values) => {
+        block = blocks.find(b => b.id == id);
+        data = block.data || [];
+        let t = 1;
+
+        for (let i = 0; i < values.length; i++) {
+            let val = values[i];
+            if (val === undefined) {
+                if (data !== undefined){
+                    val = parseFloat(data[i]);
+                }
+                else val = NaN;
+            }
+            else val = parseFloat(val); 
+            if (!isNaN(val)) t *= val;
+            else t *= 1;
+        }
+        return t; 
+}
 }
