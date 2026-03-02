@@ -44,14 +44,17 @@ document.addEventListener('mousedown', function(e) {
 
 document.addEventListener('mousemove', function(e) {
     if (!f_D || !el) return;
-    let Xi = e.clientX - X;
-    let Yi = e.clientY - Y;
 
-    let safeRect = safe.getBoundingClientRect();
-    let elRect = el.getBoundingClientRect();
+    let Xi = e.clientX - X + safe.scrollLeft;
+    let Yi = e.clientY - Y + safe.scrollTop;
 
-    Xi = Math.max(safeRect.left, Math.min(safeRect.width + safeRect.left - elRect.width, Xi)) - 10;
-    Yi = Math.max(safeRect.top, Math.min(safeRect.height + safeRect.top - elRect.height, Yi)) - 10;
+    let safeContent = safe.querySelector('.safe-zone-content');
+    let contentWidth = safeContent ? safeContent.offsetWidth : 5000;
+    let contentHeight = safeContent ? safeContent.offsetHeight : 5000;
+
+    Xi = Math.max(0, Math.min(contentWidth - el.offsetWidth, Xi));
+    Yi = Math.max(0, Math.min(contentHeight - el.offsetHeight, Yi));
+
     el.style.left = Xi + 'px';
     el.style.top = Yi + 'px';
 
