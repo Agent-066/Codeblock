@@ -1,4 +1,3 @@
-
 .movable /*всё что имеет этот класс будет двигаться*/
 {
     position: fixed;
@@ -9,18 +8,19 @@
     display: none;
 }
 .side-panel {
-    overflow-y: auto;
-    box-sizing: border-box;  
     position: fixed;
     z-index: 999999;
-    left: -100%;
+    left: -25%;
+    top: 2;
     background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
-    transition: all 0.5s;   
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     width: 25%;
-    height: 100%;
+    height: 100vh; 
     box-shadow: 10px 0 20px rgba(0,0,0,0.4);
     color: #FFF;
-    padding: 20px 10px;
+    padding: 40px 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 /* Оформление кнопки на странице */
@@ -75,7 +75,8 @@
 .side-button-2 {
     font-size: 30px;
     border-radius: 20px;
-    position: absolute;
+    position: sticky;
+    float: right; 
     z-index: 1;
     top: 8px;
     right: 8px;
@@ -89,7 +90,44 @@
     color: #FFF;
 }
 
-.safe-zone{
-  height: 90%;
-  width: 100%;
+.safe-zone {
+    transition: margin-left 0.5s ease;
+    height: 93.3vh;
+    max-width: none;
+    overflow-x: auto;
+    overflow-y: auto;
+    position: relative;
+    background-color: #262830;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Блок справа */
+.safe-zone-rt {
+    position: absolute;
+    left: 4000px;    
+    top: 500px;
+    &::before {
+        content: "➡️";
+        font-size: 40px;
+        margin-right: 10px;
+    }
+}
+
+/* Блок снизу */
+.safe-zone-down {
+    position: absolute;
+    left: 500px;
+    top: 4000px;      
+    &::before {
+        content: "⬇️";
+        font-size: 40px;
+        margin-right: 10px;
+    }
+}
+
+#side-checkbox:checked ~ .safe-zone {
+    margin-left: 25%;
 }
