@@ -92,7 +92,7 @@
 
 .safe-zone {
     transition: margin-left 0.5s ease;
-    height: 93.3vh;
+    height: 94%;
     max-width: none;
     overflow-x: auto;
     overflow-y: auto;
