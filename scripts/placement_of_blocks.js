@@ -9,7 +9,9 @@
       var blk_input_id = 0;
 
 function to_sz(t){
+  let safeRect = safe.getBoundingClientRect();
   let c_t = t.cloneNode(true);
+  c_t.setAttribute("style", `top: ${safe_zone.scrollTop + safeRect.height/2}px; left: ${safe_zone.scrollLeft + safeRect.width/2}px`)
   c_t.classList.remove("movable");
   c_t.classList.add("movable");
   c_t.removeAttribute("onclick");

@@ -99,18 +99,32 @@
     position: relative;
     background-color: #262830;
     background-image: 
-        linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+        linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px);
     background-size: 50px 50px;
 }
-
+::-webkit-scrollbar {
+    width: 10PX;
+    height: 10PX;
+    
+}
+::-webkit-scrollbar-thumb{
+    background: #27456a;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    
+}
+::-webkit-scrollbar-thumb:hover{
+    background: #6a2727;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    
+}
 /* Блок справа */
 .safe-zone-rt {
     position: absolute;
     left: 4000px;    
     top: 500px;
     &::before {
-        content: "➡️";
+        content: " ";
         font-size: 40px;
         margin-right: 10px;
     }
@@ -122,7 +136,7 @@
     left: 500px;
     top: 4000px;      
     &::before {
-        content: "⬇️";
+        content: " ";
         font-size: 40px;
         margin-right: 10px;
     }
