@@ -1,3 +1,8 @@
+/* Дополнительный стиль для отключения сетки */
+.safe-zone.no-grid {
+    background-image: none !important;
+}
+
 .block.movable /*всё что имеет этот класс будет двигаться*/
 {
     position: absolute;
@@ -144,4 +149,30 @@
 
 #side-checkbox:checked ~ .safe-zone {
     margin-left: 25%;
+}
+
+/* Стили для кнопки сетки */
+.grid-toggle-wr {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 99999;
+}
+
+.grid-toggle-btn {
+    margin: 10px;
+    font-size: 24px;
+    line-height: 24px;
+    padding: 12px 20px;
+    color: #FFF;
+    font-weight: bold;
+    background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 45%;
+    transition: all 280ms ease-in-out;
+}
+
+.grid-toggle-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(145deg, #1c3a5c 0%, #2a4870 100%);
 }
