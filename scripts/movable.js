@@ -48,12 +48,13 @@ document.addEventListener('mousemove', function(e) {
     let Xi = e.clientX - X + safe.scrollLeft;
     let Yi = e.clientY - Y + safe.scrollTop;
 
-    let safeContent = safe.querySelector('.safe-zone-content');
-    let contentWidth = safeContent ? safeContent.offsetWidth : 5000;
-    let contentHeight = safeContent ? safeContent.offsetHeight : 5000;
+    let safeRect = safe.getBoundingClientRect();
+    let elRect = el.getBoundingClientRect();
 
-    Xi = Math.max(0, Math.min(contentWidth - el.offsetWidth, Xi));
-    Yi = Math.max(0, Math.min(contentHeight - el.offsetHeight, Yi));
+    cardRect = document.querySelector(".card").getBoundingClientRect();
+
+    Xi = Math.max(safeRect.left, Math.min(safeRect.width  + safe.scrollLeft + safeRect.left - elRect.width, Xi)) - 10 - safeRect.left;
+    Yi = Math.max(safeRect.top, Math.min(safeRect.height + safe.scrollTop + safeRect.top - elRect.height, Yi)) - 10 - cardRect.height;
 
     el.style.left = Xi + 'px';
     el.style.top = Yi + 'px';
