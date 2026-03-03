@@ -107,6 +107,9 @@
         linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
         linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px);
     background-size: 50px 50px;
+    background-attachment: scroll; /* Важно: scroll, не fixed */
+    background-position: 0 0;
+    background-repeat: repeat;
 }
 ::-webkit-scrollbar {
     width: 10PX;

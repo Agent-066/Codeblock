@@ -149,3 +149,12 @@ function funct_input(e){
     }
   }
 }
+
+document.querySelectorAll(".side-panel .block").forEach(block => {
+    block.addEventListener("click", function(e) {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'OPTION') {
+        return;
+        }
+        to_sz(this);
+    });
+});

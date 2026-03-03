@@ -246,36 +246,8 @@
   <script src="scripts/id_block.js"></script>
   <!--Передвижение (очевидно)-->
   <script src="scripts/movable.js"></script>
-  <!--Игнорируем клики по кнопкам внутри блока-->
-  <script>
-    document.querySelectorAll(".side-panel .block").forEach(block => {
-        block.addEventListener("click", function(e) {
-            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'OPTION') {
-                 return;
-            }
-            to_sz(this);
-        });
-    });
-  </script>
   <!--Сетка off_on -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const gridToggle = document.getElementById('grid-toggle-btn');
-        const safeZone = document.querySelector('.safe-zone');
-        
-        if (gridToggle && safeZone) {
-            gridToggle.addEventListener('click', function() {
-                safeZone.classList.toggle('no-grid');
-                if (safeZone.classList.contains('no-grid')) {
-                    this.textContent = '⊟';
-                } else {
-                    this.textContent = '⊞';
-                }
-            });
-        }
-    });
-  </script>
-
+  <script src="scripts/grid.js"></script>
   <div class="side-button-1-wr">
     <label class="side-button-1" for="side-checkbox">
       <div class="side-b side-open">Ξ</div>
