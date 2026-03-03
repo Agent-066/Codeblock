@@ -96,10 +96,10 @@
 
           t_1_b = block_1.output.find(itm => itm.id == t_1.id);
 
-          if ((t_2_b.type != t_1_b.type) ^  t_2_b.type == "" || t_2_b.type == "" && t_1_b.type == "Exec") {
+          if (!compatible(t_1_b.type, t_2_b.type)) {
             flag_1 = false;
-            return
-          };
+            return;
+          }
 
           if (t_2_b.type == "") {
             t_2_b.type = t_1_b.type;

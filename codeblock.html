@@ -33,6 +33,12 @@
           <button onclick="OOOKEEEY_LEETS_GOOO(this.closest('.movable').id)">Start</button>
           <script>
             function OOOKEEEY_LEETS_GOOO(th){
+              couts = document.querySelectorAll("[block_type='cout']")
+              if (couts){
+                couts.forEach(itm => {
+                  itm.querySelector("input").setAttribute("value", '');
+                })
+              }
               functions["event"]?.(th);
             }
           </script>
@@ -209,7 +215,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="const" >
+    <div class="block" block_type="const">
       <div class="top_block">
         Const
         <button class="delete-button_x">x</button>
@@ -218,13 +224,21 @@
         <div class="column">
         </div>
         <div class="column">
-          <input style="width: 30px;" type="text">
+          <select class="const-type-select">
+            <option value="Integer" selected>Integer</option>
+            <option value="Float">Float</option>
+            <option value="String">String</option>
+            <option value="Boolean">Boolean</option>
+          </select>
+          <div class="const-input-container">
+            <input type="text" style="width: 60px;" placeholder="value">
+          </div>
         </div>
         <div class="column">
           <button class="out" _type="Integer">></button>
         </div>
       </div>
-    </div>
+</div>
     
   </div>
 

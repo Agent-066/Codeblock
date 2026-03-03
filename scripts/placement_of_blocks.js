@@ -46,7 +46,8 @@ function to_sz(t){
       block_info = blocks.find(itm => itm.id == block.id);
 
       block_info.data.select = type;
-      variables.find(itm => itm.id_block == block.id).type = type;
+      if(block_info.type == "Variable")  variables.find(itm => itm.id_block == block.id).type = type;
+      if(block_info.type == "const")  block_info.data.value = null;
       block_info.output[0].type = type;
       out = block.querySelector(".out");
       out.setAttribute("_type", type)
@@ -106,40 +107,89 @@ function to_sz(t){
         };
     }
   }
+
+  if (c_t.getAttribute("block_type") === "const") {
+    let select = c_t.querySelector('.const-type-select');
+    let container = c_t.querySelector('.const-input-container');
+    let out_bt = c_t.querySelector('.out');
+
+    function update_const(type) {
+      container.innerHTML = '';
+      let n_input;
+      if (type === 'Boolean'){
+        n_input = document.createElement('input');
+        n_input.type = 'checkbox';
+        n_input.style.width = '20px';
+        n_input.style.height = '20px';
+      }
+      else{
+        n_input = document.createElement('input');
+        n_input.type = 'text';
+        n_input.style.width = '60px';
+        n_input.placeholder = type === 'String' ? 'text' : 'number';
+      }
+      n_input.id = 'input_' + blk_input_id++;
+      n_input.onclick = e => e.stopPropagation();
+      n_input.onmousedown = e => e.stopPropagation();
+      n_input.addEventListener('input', funct_input);
+      if (type === 'Boolean'){
+        n_input.addEventListener('change', funct_input);
+      }
+      container.appendChild(n_input);
+
+      out_bt.setAttribute('_type', type);
+      block_Info = blocks.find(b => b.id == c_t.id);
+      if (block_Info){
+        block_Info.output[0].type = type;
+        block_Info.data.type = type;
+      }
+    }
+    select.onchange = function() {
+      update_const(this.value);
+    };
+    update_const('Integer');
+}
 }
 
 function funct_input(e){
-  let block = e.target.closest(".movable");
-  if (!block) return;
-  let i_block = blocks.find(itm => itm.id == block.id);
+  let el = e.target.closest(".movable");
+  if (!el) return;
+  let i_block = blocks.find(itm => itm.id == el.id);
   if (!i_block) return;
 
   if (i_block.type == "sum" || i_block.type == "multiplication"){
-    let inputs = block.querySelectorAll('input');
+    let inputs = el.querySelectorAll('input');
     let index = Array.from(inputs).indexOf(e.target);
-    if (index !== -1) {
+    if (index != -1) {
       i_block.data[index] = e.target.value;
     }
   }
+  else if (i_block.type == "const"){
+    if (e.target.type == 'checkbox'){
+      i_block.data.value = false;
+      i_block.data.value = e.target.checked;
+    }
+    else i_block.data.value = e.target.value;
+  }
   else {
-    if (i_block.data.input !== undefined) {
+    if (i_block.data.input != undefined){
       i_block.data.input = e.target.value;
     }
-    if (i_block.data.varname !== undefined) {
+    if (i_block.data.varname != undefined){
       i_block.data.varname = e.target.value;
-      if (i_block.type === "variable") {
+      if (i_block.type == "variable"){
         let variable = variables.find(itm => itm.id_block == i_block.id);
-        if (variable) {
+        if (variable){
           variable.name = i_block.data.varname;
           update_datalist();
         }
       }
     }
-    if (i_block.type === "get") {
+    if (i_block.type === "get"){
       let block = document.getElementById(i_block.id);
       let flag = false;
       variables.forEach(itm => {
-        if (itm.name == e.target.value) {
+        if (itm.name == e.target.value){
           flag = true;
           block.querySelector(".out").setAttribute("_type", itm.type);
           i_block.output[0].type = itm.type;

@@ -3,6 +3,17 @@
 variables = [];
 blocks = [];
 
+function compatible(s_type, t_type){
+    if (t_type == '') return true;
+    if (s_type == 'Exec' || t_type == 'Exec') return s_type == t_type;
+    if ((s_type == 'Integer' || s_type == 'Float') && (t_type == "Integer" || t_type == 'Float')) return true;
+    
+    if ((s_type == 'Boolean' && (t_type == "Integer" || t_type == 'Float')) ||
+        (t_type == 'Boolean' && (s_type == 'Integer' || s_type == 'Float'))) return true;
+
+    return s_type == t_type;
+}
+
 function add_inputs(blockEl) {
     let block = blocks.find(b => b.id == blockEl.id);
     if (!block || block.type != 'sum' && block.type != 'multiplication') return;
@@ -128,7 +139,7 @@ function add_to_blocks(th){
             data = {};
             break;
         case "const":
-            data = {input: null};
+            data = {type: "Integer", value: null};
             break;
         case "multiplication":
             data = []
@@ -182,9 +193,9 @@ function reverse_go_to(blockId, visited = new Set()) {
             inputValues.push(undefined);
         } else {
             const sourceBlock = blocks.find(b => b.id == sourceBlockId);
-            const outPin = sourceBlock.output.find(o => o.id == sourceOutId);
-            if (outPin && functions[sourceBlock.type]) {
-                const val = functions[sourceBlock.type](sourceBlockId, sourceValue, outPin.type);
+            const out = sourceBlock.output.find(o => o.id == sourceOutId);
+            if (out && functions[sourceBlock.type]) {
+                const val = functions[sourceBlock.type](sourceBlockId, sourceValue, out.type);
                 inputValues.push(val);
             } else {
                 inputValues.push(undefined);
@@ -211,10 +222,54 @@ functions = {
     set: (id) => {
         _block = blocks.find(itm => itm.id == id);
         input_value_ = reverse_go_to(id, new Set());
+        let [nameVal, val_val] = input_value_;
 
-        [Name, value] = input_value_;
-        info = variables.find(itm => itm.name == Name);
-        if (info) info.value = value;
+        let varName = String(nameVal);
+        let variable = variables.find(itm => itm.name == varName);
+        if (!variable) {
+            console.warn(`Переменная "${varName}" не найдена`);
+            return;
+        }
+
+        conv_val;
+        switch (variable.type) {
+            case "Integer":
+                conv_val = parseInt(val_val);
+                if (isNaN(conv_val)) {
+                    console.warn(`Не удалось преобразовать "${val_val}" к Integer`);
+                    return;
+                }
+                break;
+            case "Float":
+                conv_val = parseFloat(val_val);
+                if (isNaN(conv_val)) {
+                    console.warn(`Не удалось преобразовать "${val_val}" к Float`);
+                    return;
+                }
+                break;
+            case "String":
+                conv_val = String(val_val);
+                break;
+            case "Boolean":
+                if (typeof val_val === "boolean"){
+                    conv_val = val_val;
+                }
+                else if (typeof val_val === "string"){
+                    let lower = val_val.toLowerCase();
+                    conv_val = lower === "true";
+                }
+                else if (typeof val_val === "number"){
+                    conv_val = val_val !== 0;
+                }
+                else{
+                    conv_val = false;
+                }
+                break;
+            default:
+                conv_val = val_val;
+        }
+
+        variable.value = conv_val;
 
         go_to(_block.Exec[0], id);
     },
@@ -238,11 +293,13 @@ functions = {
     },
 
     const: (id) => {
-        block = blocks.find(itm => itm.id == id);
-
-        block.data.input = Number(block.data.input) //костыль
-
-        return block.data.input;
+        let block = blocks.find(itm => itm.id == id);
+        let val = block.data.value;
+        let type = block.data.type;
+        if (type === 'Integer') return parseInt(val) || 0;
+        if (type === 'Float') return parseFloat(val) || 0.0;
+        if (type === 'Boolean') return !!val;
+        return String(val);
     },
 
     sum: (id, values) => {
@@ -282,5 +339,24 @@ functions = {
             else t *= 1;
         }
         return t; 
-}
+    },
+
+    branch: (id) => {
+    block = blocks.find(b => b.id == id);
+    if (!block) return;
+
+    inputs = reverse_go_to(id, new Set());
+    if (inputs && inputs.length > 0) RC = inputs[0];
+    else RC = false;
+
+    C = Boolean(RC);
+
+    if (C) out = block.output[0];
+    else out = block.output[1];
+
+    if (out.connection && out.connection.length > 0){
+        next_id = out.connection[0].to_block;
+        go_to(next_id, id);
+    }
+    }
 }
