@@ -44,9 +44,21 @@ function to_sz(t){
       type = this.value;
       block = this.closest(".movable");
       block_info = blocks.find(itm => itm.id == block.id);
-
       block_info.data.select = type;
-      if(block_info.type == "Variable")  variables.find(itm => itm.id_block == block.id).type = type;
+
+      if (block_info.type == "variable"){
+        variables.forEach(v => {
+          if (v.id_block == block.id){
+            v.type = type;
+          }
+        });
+        update_datalist();
+      }
+      if (block_info.output.length > 0){
+        block_info.output[0].type = type;
+        let out = block.querySelector(".out");
+        if (out) out.setAttribute("_type", type);
+      }
       if(block_info.type == "const")  block_info.data.value = null;
       block_info.output[0].type = type;
       out = block.querySelector(".out");
@@ -80,8 +92,6 @@ function to_sz(t){
   }
 
   add_to_blocks(c_t);
-
-  if (c_t.getAttribute("block_type") == "variable"){variables.push({id_block: c_t.id, name: null, type: "Boolean", value: null})}
 
   let inputs = c_t.querySelectorAll("input");
   inputs.forEach(input => {
@@ -170,6 +180,64 @@ function funct_input(e){
       i_block.data.value = e.target.checked;
     }
     else i_block.data.value = e.target.value;
+  }
+  else if (i_block.type == "variable"){
+    input_ = e.target.value;
+    raw_n = input_.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    b_id = i_block.id;
+    select_type = i_block.data.select;
+    
+    const regex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+    
+    valid_names = [];
+    errors = [];
+    
+    raw_n.forEach(name => {
+      if (!regex.test(name)){
+        errors.push(`Имя "${name}" содержит недопустимые символы или начинается с цифры`);
+      }
+      else{
+        let vari = variables.find(v => v.name === name && v.id_block !== b_id);
+        if (vari){
+          errors.push(`Имя "${name}" уже используется в другом блоке`);
+        }
+        else{
+          valid_names.push(name);
+        }
+      }
+    });
+    
+    let inp_el = e.target;
+    if (errors.length > 0){
+      inp_el.style.border = "2px solid red";
+      inp_el.title = errors.join('; ');
+    }
+    else{
+      inp_el.style.border = "";
+      inp_el.title = "";
+    }
+    
+    variables = variables.filter(v => {
+      if (v.id_block !== b_id) return true;
+      return valid_names.includes(v.name);
+    });
+    
+    valid_names.forEach(name => {
+      let vari = variables.find(v => v.id_block === b_id && v.name === name);
+      if (!vari){
+        variables.push({
+          id_block: b_id,
+          name: name,
+          type: select_type,
+          value: null
+        });
+      }
+      else{
+        vari.type = select_type;
+      }
+    });
+    
+    update_datalist();
   }
   else {
     if (i_block.data.input != undefined){

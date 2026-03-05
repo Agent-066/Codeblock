@@ -85,10 +85,7 @@ function delete_block(t){
 
     delete_connection(in_ids, out_ids);
 
-    if (block_info.type == "variable"){
-        idx = variables.findIndex(itm => itm.name == block_info.varname);
-        variables.splice(idx, 1);
-    };
+    if (block_info.type == "variable") variables = variables.filter(v => v.id_block != i);
 
     blocks.forEach(itm_0 => {
         flag = itm_0.Exec.find(itm_1 => itm_1 == i);
