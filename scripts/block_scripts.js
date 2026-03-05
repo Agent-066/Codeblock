@@ -217,59 +217,70 @@ functions = {
     },
 
     set: (id) => {
-        _block = blocks.find(itm => itm.id == id);
-        input_value_ = reverse_go_to(id, new Set());
-        let [nameVal, val_val] = input_value_;
+    let _block = blocks.find(itm => itm.id == id);
+    if (!_block) return;
 
-        let varName = String(nameVal);
-        let variable = variables.find(itm => itm.name == varName);
-        if (!variable) {
-            console.warn(`Переменная "${varName}" не найдена`);
-            return;
-        }
+    let varName = _block.data.varname;
+    if (!varName) {
+        showError('Имя переменной не задано в блоке Set', _block.id);
+        return;
+    }
 
-        conv_val;
-        switch (variable.type) {
-            case "Integer":
-                conv_val = parseInt(val_val);
-                if (isNaN(conv_val)) {
-                    console.warn(`Не удалось преобразовать "${val_val}" к Integer`);
-                    return;
-                }
-                break;
-            case "Float":
-                conv_val = parseFloat(val_val);
-                if (isNaN(conv_val)) {
-                    console.warn(`Не удалось преобразовать "${val_val}" к Float`);
-                    return;
-                }
-                break;
-            case "String":
-                conv_val = String(val_val);
-                break;
-            case "Boolean":
-                if (typeof val_val === "boolean"){
-                    conv_val = val_val;
-                }
-                else if (typeof val_val === "string"){
-                    let lower = val_val.toLowerCase();
-                    conv_val = lower === "true";
-                }
-                else if (typeof val_val === "number"){
-                    conv_val = val_val !== 0;
-                }
-                else{
-                    conv_val = false;
-                }
-                break;
-            default:
+    let variable = variables.find(itm => itm.name == varName);
+    if (!variable) {
+        showError(`Переменная "${varName}" не найдена`, _block.id);
+        return;
+    }
+
+    let inputValues = reverse_go_to(id, new Set());
+    let val_val = inputValues[0]; // значение с data-пина
+    if (val_val === undefined) {
+        showError('Не подано значение на вход блока Set', _block.id);
+        return;
+    }
+
+    let conv_val;
+    switch (variable.type) {
+        case "Integer":
+            conv_val = parseInt(val_val);
+            if (isNaN(conv_val)) {
+                showError(`Не удалось преобразовать "${val_val}" к Integer`, _block.id);
+                return;
+            }
+            break;
+        case "Float":
+            conv_val = parseFloat(val_val);
+            if (isNaN(conv_val)) {
+                showError(`Не удалось преобразовать "${val_val}" к Float`, _block.id);
+                return;
+            }
+            break;
+        case "String":
+            conv_val = String(val_val);
+            break;
+        case "Boolean":
+            if (typeof val_val === "boolean") {
                 conv_val = val_val;
-        }
+            } else if (typeof val_val === "string") {
+                let lower = val_val.toLowerCase();
+                conv_val = lower === "true" || lower === "1";
+            } else if (typeof val_val === "number") {
+                conv_val = val_val !== 0;
+            } else {
+                conv_val = false;
+            }
+            break;
+        default:
+            conv_val = val_val;
+    }
 
-        variable.value = conv_val;
+    variable.value = conv_val;
 
+    // Продолжить выполнение по Exec выходу
+    if (_block.Exec && _block.Exec.length > 0) {
         go_to(_block.Exec[0], id);
-    },
+    }
+},
 
     cout: (id) => {
         block_info = blocks.find(itm => itm.id == id);

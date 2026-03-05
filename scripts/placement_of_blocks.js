@@ -174,6 +174,9 @@ function funct_input(e){
       i_block.data[index] = e.target.value;
     }
   }
+  else if (i_block.type == "set") {
+    i_block.data.varname = e.target.value;
+  }
   else if (i_block.type == "const"){
     if (e.target.type == 'checkbox'){
       i_block.data.value = false;
@@ -255,11 +258,10 @@ function funct_input(e){
     }
     if (i_block.type === "get"){
       let block = document.getElementById(i_block.id);
-      let flag = false;
       variables.forEach(itm => {
         if (itm.name == e.target.value){
-          flag = true;
           block.querySelector(".out").setAttribute("_type", itm.type);
+          i_block.data.varname = itm.name;
           i_block.output[0].type = itm.type;
           return;
         }
