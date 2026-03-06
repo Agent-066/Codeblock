@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function showError(message, blk_id = null){
+function show_ERR(message, blk_id = null){
     console.warn(message);
     if (blk_id){
         blk_el = document.getElementById(blk_id);
@@ -120,7 +120,7 @@ function showError(message, blk_id = null){
     }
 }
 
-function clearErrors(){
+function clear_ERR(){
     ERRORS.forEach(blk_id => {
         blk_el = document.getElementById(blk_id);
         if (blk_el) blk_el.classList.remove('block-error');
@@ -146,7 +146,7 @@ function compatible(s_type, t_type){
     return s_type == t_type;
 }
 
-function add_inputs(blk_el) {
+function add_inputs(blk_el){
     let block = blocks.find(b => b.id == blk_el.id);
     if (!block || block.type != 'sum' && block.type != 'multiplication') return;
     let left_col = blk_el.querySelector('.three_columns .column:first-child');
@@ -284,45 +284,46 @@ function add_to_blocks(th){
 }
 
 function go_to(id_to, id_from){
-    if (id_to == undefined) {showError(`Не подсоединен блок c id ${id_from}`, id_from); return;}
+    if (id_to == undefined) {show_ERR(`Не подсоединен блок c id ${id_from}`, id_from); return;}
 
     block = blocks.find(itm => itm.id == id_to);
 
     functions[block.type]?.(id_to);
 }
 
-function reverse_go_to(blk_id, visited = new Set()) {
-    if (visited.has(blk_id)){
-        showError('Обнаружен цикл в графе данных', blk_id);
+function reverse_go_to(blockId, visited = new Set()){
+    if (visited.has(blockId)){
+        show_ERR(`Обнаружен цикл в графе данных для блока с id ${blockId}`, blockId);
         return null;
     }
-    visited.add(blk_id);
+    visited.add(blockId);
 
-    block = blocks.find(b => b.id == blk_id);
+    const block = blocks.find(b => b.id == blockId);
     if (!block) return null;
 
-    inp_values = [];
-    for (const inp of block.input){
+    const inp_values = [];
+    for (inp of block.input){
         if (inp.type === 'Exec') continue;
+
         if (inp.connection.length === 0){
             inp_values.push(undefined);
             continue;
         }
-        
-        conn = inp.connection[0];
-        s_out_id = conn.from;
-        s_b_id = conn.from_block;
-        s_val = reverse_go_to(s_b_id, visited);
 
-        if (s_val === undefined){
-            showError(`Не удалось вычислить значение для блока с id ${s_b_id} `, s_b_id);
+        const conn = inp.connection[0];
+        const s_blk_id = conn.from_block;
+        const s_out_id = conn.from;
+
+        const s_value = reverse_go_to(s_blk_id, visited);
+        if (s_value === undefined){
+            console.error('Не удалось вычислить значение для блока с id', s_blk_id);
             inp_values.push(undefined);
         }
         else{
-            s_b = blocks.find(b => b.id == s_b_id);
-            out = s_b.output.find(o => o.id == s_out_id);
-            if (out && functions[s_b.type]){
-                val = functions[s_b.type](s_b_id, s_val, out.type);
+            const s_blk = blocks.find(b => b.id == s_blk_id);
+            const out = s_blk.output.find(o => o.id == s_out_id);
+            if (out && functions[s_blk.type]){
+                const val = functions[s_blk.type](s_blk_id, s_value, out.type);
                 inp_values.push(val);
             }
             else{
@@ -353,20 +354,20 @@ functions = {
 
         let varName = _block.data.varname;
         if (!varName){
-            showError(`Имя переменной не задано в блоке Set`, _block.id);
+            show_ERR(`Имя переменной не задано в блоке Set`, _block.id);
             return;
         }
 
         let variable = variables.find(itm => itm.name == varName);
         if (!variable){
-            showError(`Переменная "${varName}" не найдена`, _block.id);
+            show_ERR(`Переменная "${varName}" не найдена`, _block.id);
             return;
         }
 
         let inp_values = reverse_go_to(id, new Set());
         let val_val = inp_values[0]; 
         if (val_val === undefined){
-            showError('Не подано значение на вход блока Set', _block.id);
+            show_ERR('Не подано значение на вход блока Set', _block.id);
             return;
         }
 
@@ -375,14 +376,14 @@ functions = {
             case "Integer":
                 conv_val = parseInt(val_val);
                 if (isNaN(conv_val)){
-                    showError(`Не удалось преобразовать "${val_val}" к Integer`, _block.id);
+                    show_ERR(`Не удалось преобразовать "${val_val}" к Integer`, _block.id);
                     return;
                 }
                 break;
             case "Float":
                 conv_val = parseFloat(val_val);
                 if (isNaN(conv_val)){
-                    showError(`Не удалось преобразовать "${val_val}" к Float`, _block.id);
+                    show_ERR(`Не удалось преобразовать "${val_val}" к Float`, _block.id);
                     return;
                 }
                 break;
@@ -428,7 +429,7 @@ functions = {
         Name = block.data.varname;
         info = variables.find(itm => itm.name == Name);
         if (!info){
-            showError(`Переменная "${Name}" не найдена`, block.id);
+            show_ERR(`Переменная "${Name}" не найдена`, block.id);
             return null;
         }
 
@@ -485,7 +486,7 @@ functions = {
     },
 
     branch: (id) => {
-    block = blocks.find(b => b.id == id);
+    const block = blocks.find(b => b.id == id);
     if (!block) return;
 
     inputs = reverse_go_to(id, new Set());
