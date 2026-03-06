@@ -95,17 +95,28 @@
     color: #FFF;
 }
 
+.border{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5000px;
+    height: 5000px;
+    border: 10px solid #ff000068;
+    border-style: dashed;
+    box-sizing: border-box;
+}
+
 .safe-zone {
     transition: margin-left 0.5s ease;
     height: 94%;
     max-width: none;
-    overflow-x: auto;
-    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
     position: relative;
     background-color: #262830;
     background-image: 
-        linear-gradient(rgba(0,0,0,0.1) 2px, transparent 2px),
-        linear-gradient(90deg, rgba(0,0,0,0.1) 2px, transparent 2px);
+        linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px);
     background-size: 50px 50px;
     background-attachment: scroll; /* Важно: scroll, не fixed */
     background-position: 0 0;
@@ -178,4 +189,44 @@
 .grid-toggle-btn:hover {
     transform: scale(1.1);
     background: linear-gradient(145deg, #1c3a5c 0%, #2a4870 100%);
+}
+
+#error-console {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(20, 20, 30, 0.95);
+    color: #ff6b6b;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 350px;
+    max-height: 200px;
+    z-index: 10000;
+    font-family: monospace;
+    border-left: 4px solid #ff3b3b;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: none;
+}
+
+.block-error {
+    border: 3px solid #ff3b3b !important;
+    box-shadow: 0 0 20px rgba(255, 59, 59, 0.7) !important;
+}
+
+#output-console {
+    position: fixed;
+    bottom: 20px;
+    right: 150px;
+    background: rgba(20, 20, 30, 0.95);
+    color: #0f0;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 350px;
+    max-height: 200px;
+    overflow-y: auto; 
+    z-index: 10000;
+    font-family: monospace;
+    border-left: 4px solid #0f0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: none;
 }

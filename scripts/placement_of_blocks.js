@@ -1,21 +1,21 @@
-      var safe_zone = document.querySelector(".safe-zone");
-      var id_list = [];
-      var cur_i = 0;
-      var id_cur = [cur_i];
 
-      //Позже доработаю id кнопок
-      var but_in_id = 0;
-      var but_out_id = 0;
-      var blk_input_id = 0;
+var id_list = [];
+var cur_i = 0;
+var id_cur = [cur_i];
+
+//Позже доработаю id кнопок
+var but_in_id = 0;
+var but_out_id = 0;
+var blk_input_id = 0;
 
 function to_sz(t){
   let safeRect = safe.getBoundingClientRect();
   let c_t = t.cloneNode(true);
-  c_t.setAttribute("style", `top: ${safe_zone.scrollTop + safeRect.height/2}px; left: ${safe_zone.scrollLeft + safeRect.width/2}px`)
+  c_t.setAttribute("style", `top: ${safe.scrollTop + safeRect.height/2}px; left: ${safe.scrollLeft + safeRect.width/2}px`)
   c_t.classList.remove("movable");
   c_t.classList.add("movable");
   c_t.removeAttribute("onclick");
-  safe_zone.append(c_t);
+  safe.append(c_t);
 
   let out_t = c_t.querySelectorAll(".out");
   if (out_t.length > 0) {
@@ -210,14 +210,14 @@ function funct_input(e){
       }
     });
     
-    let inp_el = e.target;
     if (errors.length > 0){
-      inp_el.style.border = "2px solid red";
-      inp_el.title = errors.join('; ');
+      el.style.border = "2px solid red";
+      el.title = errors.join('; ');
+      errors.forEach(err => showError(err, b_id));
     }
     else{
-      inp_el.style.border = "";
-      inp_el.title = "";
+      el.style.border = "";
+      el.title = "";
     }
     
     variables = variables.filter(v => {

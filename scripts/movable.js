@@ -1,5 +1,5 @@
 let el = null
-let safe = document.querySelector(".safe-zone")
+var safe = document.querySelector(".safe-zone")
 let svg = safe.querySelector('svg')
 let f_D = false;
 let X = 0;
@@ -31,7 +31,6 @@ document.addEventListener('mousedown', function(e) {
     let movable = e.target.closest(".movable");
     if (!movable) return;
     el = movable;
-    el.style.cursor = 'move';
 
     let elRect = el.getBoundingClientRect();
 

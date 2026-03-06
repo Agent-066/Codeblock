@@ -96,12 +96,13 @@
 
           t_1_b = block_1.output.find(itm => itm.id == t_1.id);
 
-          if (!compatible(t_1_b.type, t_2_b.type)) {
+          if (!compatible(t_1_b.type, t_2_b.type)){
             flag_1 = false;
+            showError(`Несовместимые типы: ${t_1_b.type} и ${t_2_b.type}`, block_2.id);
             return;
           }
 
-          if (t_2_b.type == "") {
+          if (t_2_b.type == ""){
             t_2_b.type = t_1_b.type;
             t_2.setAttribute("_type", t_1_b.type)
           }

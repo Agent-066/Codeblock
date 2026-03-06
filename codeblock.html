@@ -18,7 +18,6 @@
     <a href="gaide.pdf" class="contact-button">Как пользоваться ЭТИМ (Никак)</a>
   </div>
 
-
   <input type="checkbox" id="side-checkbox" />
 
   <div class="side-panel">
@@ -30,15 +29,12 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button onclick="OOOKEEEY_LEETS_GOOO(this.closest('.movable').id)">Start</button>
+          <button onclick="START(this.closest('.movable').id)">Start</button>
           <script>
-            function OOOKEEEY_LEETS_GOOO(th){
+            function START(th){
+              clear_console();
+              clearErrors();
               couts = document.querySelectorAll("[block_type='cout']")
-              if (couts){
-                couts.forEach(itm => {
-                  itm.querySelector("input").setAttribute("value", '');
-                })
-              }
               functions["event"]?.(th);
             }
           </script>
@@ -191,7 +187,7 @@
       </div>
     </div>
 
-    <div class="block" block_type="cout" >
+    <div class="block" block_type="cout">
       <div class="top_block">
         Cout
         <button class="delete-button_x">x</button>
@@ -201,11 +197,8 @@
           <button class="in" _type="Exec">></button>
           <button class="in" _type="">></button>
         </div>
-        <div class="column">
-          <input readonly style="width: 100px; height: 55px; background-color: black; color: rgb(0, 255, 0); overflow-y: visible; resize: none">
-        </div>
-        <div class="column">
-        </div>
+        <div class="column"></div>
+        <div class="column"></div>
       </div>
     </div>
 
@@ -232,13 +225,13 @@
           <button class="out" _type="Integer">></button>
         </div>
       </div>
-</div>
+    </div>
     
   </div>
 
-
   <div class="safe-zone">
-        <svg style="position: absolute; height: 5000px; width: 5000px;"></svg>
+    <svg style="position: absolute; height: 5000px; width: 5000px;"></svg>
+    <div class="border"></div>
     <div class="safe-zone-rt"></div>
     <div class="safe-zone-down"></div>
   </div>
@@ -262,5 +255,16 @@
     </label>
   </div>
 
+  <div id="error-console">
+    <div style="font-weight: bold; margin-bottom: 8px;">Ошибки</div>
+    <div id="error-messages" style="max-height: 150px; overflow-y: auto;"></div>
+  </div>
+  <div id="output-console">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+    <span style="font-weight: bold;">Вывод</span>
+    <button id="clear-output" style="background: none; border: none; color: #0f0; cursor: pointer; font-size: 14px;">X</button>
+    </div>
+    <div id="output-messages"></div>
+  </div>
 </body>
 </html>

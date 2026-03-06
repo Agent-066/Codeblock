@@ -1,7 +1,139 @@
-//Кидаем в to_sz()
-
 variables = [];
 blocks = [];
+
+safe = document.querySelector(".safe-zone");
+
+ERRORS = new Set();
+
+safe.scrollTop = 2000;
+safe.scrollLeft = 1400;
+
+f_S = false;
+startX = 0;
+startY = 0;
+start_Sc_left = safe.scrollLeft;
+start_Sc_top = safe.scrollTop;
+
+safe_mousedown = function(e){
+    if (!e.target.closest(".safe-zone") || e.target.closest(".movable") || e.target.closest("circle")) return;
+    f_S = true;
+
+    startX = e.clientX;
+    startY = e.clientY;
+    start_Sc_left = safe.scrollLeft;
+    start_Sc_top = safe.scrollTop;
+
+    safe.addEventListener("mousemove", safe_mousemove);
+
+    e.preventDefault()
+}
+
+safe_mousemove = function(e){
+    if (!f_S) return;
+    dX = e.clientX - startX;
+    dY = e.clientY - startY;
+
+    safe.scrollLeft = start_Sc_left - dX;
+    safe.scrollTop = start_Sc_top - dY;
+
+    safe.addEventListener("mouseup", safe_mouseup);
+    safe.addEventListener("mouseleave", safe_mouseleave);
+}
+
+safe_mouseup = function(){
+    if (f_S){
+        f_S = false;
+        safe.removeEventListener("mousemove", safe_mousemove)
+    }
+}
+
+safe_mouseleave = function(){
+    if (f_S){
+        f_S = false;
+        safe.removeEventListener("mousemove", safe_mousemove)
+    }
+}
+
+safe.addEventListener("mousedown", safe_mousedown);
+
+function clear_console(){
+    consoleout = document.querySelector("#output-messages");
+    if (!console) return;
+    Array.from(consoleout.children).forEach(itm => {
+        itm.remove();
+    })
+}
+
+function printToConsole(value){
+    cons_el = document.getElementById('output-console');
+    msg_el = document.getElementById('output-messages');
+    if (!cons_el || !msg_el) return;
+
+    console.log(value)
+    cons_el.style.display = 'block';
+    line = document.createElement('div');
+    line.textContent = String(value);
+    line.style.borderBottom = '1px solid #333';
+    line.style.padding = '2px 0';
+    msg_el.appendChild(line);
+    msg_el.scrollTop = msg_el.scrollHeight;
+}
+
+function clearOutputConsole() {
+    msg_el = document.getElementById('output-messages');
+    if (msg_el) msg_el.innerHTML = '';
+    cons_el = document.getElementById('output-console');
+    if (cons_el && msg_el.children.length === 0) {
+        cons_el.style.display = 'none';
+    }
+}
+
+// Кнопка очистки
+document.addEventListener('DOMContentLoaded', () => {
+    const clear_b = document.getElementById('clear-output');
+    if (clear_b) {
+        clear_b.addEventListener('click', clearOutputConsole);
+    }
+});
+
+function showError(message, blk_id = null){
+    console.warn(message);
+    if (blk_id){
+        blk_el = document.getElementById(blk_id);
+        if (blk_el){
+            blk_el.classList.add('block-error');
+            ERRORS.add(blk_id);
+        }
+    }
+
+    ERR_cons = document.getElementById('error-console');
+    ERR_msg = document.getElementById('error-messages');
+    if (ERR_cons && ERR_msg){
+        ERR_cons.style.display = 'block';
+        msg_oformlenie = document.createElement('div');
+        msg_oformlenie.textContent = `• ${message}`;
+        msg_oformlenie.style.marginBottom = '4px';
+        msg_oformlenie.style.paddingBottom = '2px';
+        msg_oformlenie.style.borderBottom = '1px solid #444';
+        ERR_msg.appendChild(msg_oformlenie);
+        ERR_msg.scrollTop = ERR_msg.scrollHeight;
+    }
+}
+
+function clearErrors(){
+    ERRORS.forEach(blk_id => {
+        blk_el = document.getElementById(blk_id);
+        if (blk_el) blk_el.classList.remove('block-error');
+    });
+    ERRORS.clear();
+
+    ERR_cons = document.getElementById('error-console');
+    ERR_msg = document.getElementById('error-messages');
+    if (ERR_cons && ERR_msg){
+        ERR_msg.innerHTML = '';
+        ERR_cons.style.display = 'none';
+    }
+}
 
 function compatible(s_type, t_type){
     if (t_type == '') return true;
@@ -14,12 +146,12 @@ function compatible(s_type, t_type){
     return s_type == t_type;
 }
 
-function add_inputs(blockEl) {
-    let block = blocks.find(b => b.id == blockEl.id);
+function add_inputs(blk_el) {
+    let block = blocks.find(b => b.id == blk_el.id);
     if (!block || block.type != 'sum' && block.type != 'multiplication') return;
-    let left_col = blockEl.querySelector('.three_columns .column:first-child');
-    let right_col = blockEl.querySelector('.three_columns .column:nth-child(2)');
-    let add = blockEl.querySelector('.add');
+    let left_col = blk_el.querySelector('.three_columns .column:first-child');
+    let right_col = blk_el.querySelector('.three_columns .column:nth-child(2)');
+    let add = blk_el.querySelector('.add');
     if (!left_col || !right_col || !add) return;
 
     let in_b = document.createElement('button');
@@ -45,20 +177,18 @@ function add_inputs(blockEl) {
 
 function delete_connection(in_ids, out_ids) {
     if (in_ids === false && out_ids === false) return;
-
-    const inList = Array.isArray(in_ids) ? in_ids : [];
-    const outList = Array.isArray(out_ids) ? out_ids : [];
+    out_list = Array.isArray(out_ids) ? out_ids : [];
+    in_list = Array.isArray(in_ids) ? in_ids : [];
 
     blocks.forEach(block => {
         block.input.forEach(inp => {
-            if (inp.connection) {
-                inp.connection = inp.connection.filter(conn => !inList.includes(conn.to));
+            if (inp.connection){
+                inp.connection = inp.connection.filter(conn => !in_list.includes(conn.to));
             }
         });
-
         block.output.forEach(out => {
-            if (out.connection) {
-                out.connection = out.connection.filter(conn => !outList.includes(conn.from));
+            if (out.connection){
+                out.connection = out.connection.filter(conn => !out_list.includes(conn.from));
             }
         });
     });
@@ -154,52 +284,53 @@ function add_to_blocks(th){
 }
 
 function go_to(id_to, id_from){
-    if (id_to == undefined) {console.error("Не подсоединен блок c id " + id_from); return;}
+    if (id_to == undefined) {showError(`Не подсоединен блок c id ${id_from}`, id_from); return;}
 
     block = blocks.find(itm => itm.id == id_to);
 
     functions[block.type]?.(id_to);
 }
 
-function reverse_go_to(blockId, visited = new Set()) {
-    if (visited.has(blockId)) {
-        console.warn('Обнаружен цикл в графе данных для блока с id', blockId);
+function reverse_go_to(blk_id, visited = new Set()) {
+    if (visited.has(blk_id)){
+        showError('Обнаружен цикл в графе данных', blk_id);
         return null;
     }
-    visited.add(blockId);
+    visited.add(blk_id);
 
-    const block = blocks.find(b => b.id == blockId);
+    block = blocks.find(b => b.id == blk_id);
     if (!block) return null;
 
-    const inputValues = [];
-    for (const inp of block.input) {
+    inp_values = [];
+    for (const inp of block.input){
         if (inp.type === 'Exec') continue;
-
-        if (inp.connection.length === 0) {
-            inputValues.push(undefined);
+        if (inp.connection.length === 0){
+            inp_values.push(undefined);
             continue;
         }
+        
+        conn = inp.connection[0];
+        s_out_id = conn.from;
+        s_b_id = conn.from_block;
+        s_val = reverse_go_to(s_b_id, visited);
 
-        const conn = inp.connection[0];
-        const sourceBlockId = conn.from_block;
-        const sourceOutId = conn.from;
-
-        const sourceValue = reverse_go_to(sourceBlockId, visited);
-        if (sourceValue === undefined) {
-            console.error('Не удалось вычислить значение для блока с id', sourceBlockId);
-            inputValues.push(undefined);
-        } else {
-            const sourceBlock = blocks.find(b => b.id == sourceBlockId);
-            const out = sourceBlock.output.find(o => o.id == sourceOutId);
-            if (out && functions[sourceBlock.type]) {
-                const val = functions[sourceBlock.type](sourceBlockId, sourceValue, out.type);
-                inputValues.push(val);
-            } else {
-                inputValues.push(undefined);
+        if (s_val === undefined){
+            showError(`Не удалось вычислить значение для блока с id ${s_b_id} `, s_b_id);
+            inp_values.push(undefined);
+        }
+        else{
+            s_b = blocks.find(b => b.id == s_b_id);
+            out = s_b.output.find(o => o.id == s_out_id);
+            if (out && functions[s_b.type]){
+                val = functions[s_b.type](s_b_id, s_val, out.type);
+                inp_values.push(val);
+            }
+            else{
+                inp_values.push(undefined);
             }
         }
     }
-    return inputValues;
+    return inp_values;
 }
 
 functions = {
@@ -217,85 +348,89 @@ functions = {
     },
 
     set: (id) => {
-    let _block = blocks.find(itm => itm.id == id);
-    if (!_block) return;
+        let _block = blocks.find(itm => itm.id == id);
+        if (!_block) return;
 
-    let varName = _block.data.varname;
-    if (!varName) {
-        showError('Имя переменной не задано в блоке Set', _block.id);
-        return;
-    }
+        let varName = _block.data.varname;
+        if (!varName){
+            showError(`Имя переменной не задано в блоке Set`, _block.id);
+            return;
+        }
 
-    let variable = variables.find(itm => itm.name == varName);
-    if (!variable) {
-        showError(`Переменная "${varName}" не найдена`, _block.id);
-        return;
-    }
+        let variable = variables.find(itm => itm.name == varName);
+        if (!variable){
+            showError(`Переменная "${varName}" не найдена`, _block.id);
+            return;
+        }
 
-    let inputValues = reverse_go_to(id, new Set());
-    let val_val = inputValues[0]; // значение с data-пина
-    if (val_val === undefined) {
-        showError('Не подано значение на вход блока Set', _block.id);
-        return;
-    }
+        let inp_values = reverse_go_to(id, new Set());
+        let val_val = inp_values[0]; 
+        if (val_val === undefined){
+            showError('Не подано значение на вход блока Set', _block.id);
+            return;
+        }
 
-    let conv_val;
-    switch (variable.type) {
-        case "Integer":
-            conv_val = parseInt(val_val);
-            if (isNaN(conv_val)) {
-                showError(`Не удалось преобразовать "${val_val}" к Integer`, _block.id);
-                return;
-            }
-            break;
-        case "Float":
-            conv_val = parseFloat(val_val);
-            if (isNaN(conv_val)) {
-                showError(`Не удалось преобразовать "${val_val}" к Float`, _block.id);
-                return;
-            }
-            break;
-        case "String":
-            conv_val = String(val_val);
-            break;
-        case "Boolean":
-            if (typeof val_val === "boolean") {
+        let conv_val;
+        switch (variable.type) {
+            case "Integer":
+                conv_val = parseInt(val_val);
+                if (isNaN(conv_val)){
+                    showError(`Не удалось преобразовать "${val_val}" к Integer`, _block.id);
+                    return;
+                }
+                break;
+            case "Float":
+                conv_val = parseFloat(val_val);
+                if (isNaN(conv_val)){
+                    showError(`Не удалось преобразовать "${val_val}" к Float`, _block.id);
+                    return;
+                }
+                break;
+            case "String":
+                conv_val = String(val_val);
+                break;
+            case "Boolean":
+                if (typeof val_val === "boolean"){
+                    conv_val = val_val;
+                }
+                else if (typeof val_val === "string"){
+                    let lower = val_val.toLowerCase();
+                    conv_val = lower === "true" || lower === "1";
+                }
+                else if (typeof val_val === "number"){
+                    conv_val = val_val !== 0;
+                }
+                else{
+                    conv_val = false;
+                }
+                break;
+            default:
                 conv_val = val_val;
-            } else if (typeof val_val === "string") {
-                let lower = val_val.toLowerCase();
-                conv_val = lower === "true" || lower === "1";
-            } else if (typeof val_val === "number") {
-                conv_val = val_val !== 0;
-            } else {
-                conv_val = false;
-            }
-            break;
-        default:
-            conv_val = val_val;
-    }
+        }
 
-    variable.value = conv_val;
+        variable.value = conv_val;
 
-    // Продолжить выполнение по Exec выходу
-    if (_block.Exec && _block.Exec.length > 0) {
-        go_to(_block.Exec[0], id);
-    }
-},
+        if (_block.Exec && _block.Exec.length > 0){
+            go_to(_block.Exec[0], id);
+        }
+    },
 
     cout: (id) => {
         block_info = blocks.find(itm => itm.id == id);
-        _block = document.getElementById(block_info.id);
+        if (!block_info) return;
 
-        value = reverse_go_to(id, new Set())[0];
-
-        _block.querySelector("input").setAttribute("value", value);
-        console.log(value)
+        let value = reverse_go_to(id, new Set())[0];
+        printToConsole(value);
     },
 
     get: (id) => {
         block = blocks.find(itm => itm.id == id);
         Name = block.data.varname;
         info = variables.find(itm => itm.name == Name);
+        if (!info){
+            showError(`Переменная "${Name}" не найдена`, block.id);
+            return null;
+        }
 
         return info ? info.value : null;
     },
