@@ -98,7 +98,7 @@
 
           if (!compatible(t_1_b.type, t_2_b.type)){
             flag_1 = false;
-            showError(`Несовместимые типы: ${t_1_b.type} и ${t_2_b.type}`, block_2.id);
+            show_ERR(`Несовместимые типы: ${t_1_b.type} и ${t_2_b.type}`, block_2.id);
             return;
           }
 

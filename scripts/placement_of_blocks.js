@@ -108,7 +108,9 @@ function to_sz(t){
     input.addEventListener("input", funct_input)
   })
 
-  if (c_t.getAttribute('block_type') == 'sum' || c_t.getAttribute('block_type') == 'multiplication') {
+  if (c_t.getAttribute('block_type') == 'sum' || c_t.getAttribute('block_type') == 'multiplication' ||
+      c_t.getAttribute('block_type') == 'subtraction' || c_t.getAttribute('block_type') == 'division') {
+
     let add_b = c_t.querySelector('.add');
     if (add_b) {
         add_b.onclick = function(e) {
@@ -167,7 +169,12 @@ function funct_input(e){
   let i_block = blocks.find(itm => itm.id == el.id);
   if (!i_block) return;
 
-  if (i_block.type == "sum" || i_block.type == "multiplication"){
+  if (i_block.type == "sum" || i_block.type == 'multiplication' ||
+      i_block.type == 'subtraction' || i_block.type == 'division' ||
+      i_block.type == 'modulo' || i_block.type == 'operation_more' ||
+      i_block.type == 'operation_less' || i_block.type == 'operation_equal' ||
+      i_block.type == 'operation_not_equal') 
+  {
     let inputs = el.querySelectorAll('input');
     let index = Array.from(inputs).indexOf(e.target);
     if (index != -1) {
