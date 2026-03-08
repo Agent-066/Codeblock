@@ -688,7 +688,7 @@ functions = {
     },
 
     branch: (id) => {
-        block = blocks.find(b => b.id == id);
+        let block = blocks.find(b => b.id == id);
         if (!block) return;
 
         inputs = reverse_go_to(id, new Set());

@@ -8,6 +8,10 @@
     position: absolute;
 }
 
+a {
+    text-align: center;
+}
+
 /* боковая панель */
 #side-checkbox {
     display: none;
@@ -15,11 +19,11 @@
 .side-panel {
     position: fixed;
     z-index: 999999;
-    left: -25%;
+    left: -350px;
     top: 2;
     background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
     transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 25%;
+    width: 350px;
     height: 100vh; 
     box-shadow: 10px 0 20px rgba(0,0,0,0.4);
     color: #FFF;
@@ -162,7 +166,7 @@
 }
 
 #side-checkbox:checked ~ .safe-zone {
-    margin-left: 25%;
+    margin-left: 350px;
 }
 
 /* Стили для кнопки сетки */
@@ -195,7 +199,12 @@
     position: fixed;
     bottom: 20px;
     left: 20px;
-    background: rgba(20, 20, 30, 0.95);
+    background: 
+            linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+            linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+            linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+            radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+            rgba(20, 20, 30, 0.8);
     color: #ff6b6b;
     padding: 15px;
     border-radius: 8px;
@@ -217,7 +226,12 @@
     position: fixed;
     bottom: 20px;
     right: 150px;
-    background: rgba(20, 20, 30, 0.95);
+    background:
+            linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+            linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+            linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+            radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+            rgba(20, 20, 30, 0.8);
     color: #0f0;
     padding: 15px;
     border-radius: 8px;

@@ -222,7 +222,7 @@ function funct_input(e){
     if (errors.length > 0){
       el.style.border = "2px solid red";
       el.title = errors.join('; ');
-      errors.forEach(err => showError(err, b_id));
+      errors.forEach(err => show_ERR(err, b_id));
     }
     else{
       el.style.border = "";
