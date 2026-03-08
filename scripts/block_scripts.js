@@ -166,7 +166,6 @@ function add_inputs(blk_el){
     left_col.insertBefore(in_b, add);
 
     let inp = document.createElement('input');
-    inp.style.width = '50px';
     inp.style.margin = '1.4px';
     inp.id = 'input_' + blk_input_id++;
     inp.onclick = function(e){ e.stopPropagation(); };

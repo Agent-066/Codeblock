@@ -24,7 +24,7 @@
     <label class="side-button-2" for="side-checkbox">+</label>
     <div class="block" block_type="event">
       <div class="top_block">
-        Event
+        <p>Event</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -43,15 +43,15 @@
           Start
         </div>
         <div class="column">
-          <button class="out" _type="Exec"></button>
+          <button class="out" _type="Exec">▷</button>
         </div>
       </div>
     </div>
 
     <div class="block" block_type="variable">
       <div class="top_block">
-      Variable
-      <button class="delete-button_x">x</button>
+        <p>Variable</p>
+        <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column"></div>
@@ -62,7 +62,18 @@
             <option>String</option>
             <option selected>Boolean</option>
           </select>
-          <input style="width: 50px;" name="Var">
+          <select>
+            <option>
+              ■ Single
+            </option>
+            <option>
+              ■ ■ ■ Array
+            </option>
+            <option>
+              {} Struct
+            </option>
+          </select>
+          <input name="Var" placeholder="input name">
         </div>
         <div class="column"></div>
       </div>
@@ -70,35 +81,35 @@
 
     <div class="block" block_type="set">
       <div class="top_block">
-        Set
+        <p>Set</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Exec"></button>
+          <button class="in" _type="Exec">▷</button>
           <button class="in" _type=""></button>
         </div>
         <div class="column">
-          <input style="width: 80px;" placeholder="variable name" list="choose_or_input">
+          <input placeholder="variable name" list="choose_or_input">
           <datalist id="choose_or_input">
           </datalist>
         </div>
         <div class="column">
-          <button class="out" _type="Exec"></button>
+          <button class="out" _type="Exec">▷</button>
         </div>
       </div>
     </div>
 
     <div class="block" block_type="get" >
       <div class="top_block">
-        Get
+        <p>Get</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
         </div>
         <div class="column">
-          <input style="width: 50px;" list="choose_or_input">
+          <input list="choose_or_input" placeholder="variable name">
           <datalist id="choose_or_input">
           </datalist>
           <script>
@@ -126,7 +137,7 @@
 
     <div class="block" block_type="multiplication" >
       <div class="top_block">
-        Multiplication
+        <p>Multiplication</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -136,8 +147,8 @@
           <button class="add">+</button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Integer"></button>
@@ -147,7 +158,7 @@
 
     <div class="block" block_type="sum" >
       <div class="top_block">
-        Sum
+        <p>Sum</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -157,8 +168,8 @@
           <button class="add">+</button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Integer"></button>
@@ -168,33 +179,32 @@
 
     <div class="block" block_type="branch" >
       <div class="top_block">
-        Branch (if)
+        <p>Branch (if)</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Exec"></button>
+          <button class="in" _type="Exec">▷</button>
           <button class="in" _type="Boolean"></button>
         </div>
+        <div class="column"></div>
         <div class="column">
-          <br>True</br>
-          <br>False</br>
-        </div>
-        <div class="column">
-          <button class="out" _type="Exec"></button>
-          <button class="out" _type="Exec"></button>
+          <button class="out" _type="Exec">▷</button>
+          True
+          <button class="out" _type="Exec">▷</button>
+          False
         </div>
       </div>
     </div>
 
     <div class="block" block_type="cout">
       <div class="top_block">
-        Cout
+        <p>Cout</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Exec"></button>
+          <button class="in" _type="Exec">▷</button>
           <button class="in" _type=""></button>
         </div>
         <div class="column"></div>
@@ -204,7 +214,7 @@
 
     <div class="block" block_type="const">
       <div class="top_block">
-        Const
+        <p>Const</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -229,7 +239,7 @@
     
     <div class="block" block_type="subtraction" >
       <div class="top_block">
-        Subtraction
+        <p>Subtraction</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -239,8 +249,8 @@
           <button class="add">+</button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Integer"></button>
@@ -250,7 +260,7 @@
     
     <div class="block" block_type="division" >
       <div class="top_block">
-        Division
+        <p>Division</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -260,8 +270,8 @@
           <button class="add">+</button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Integer"></button>
@@ -271,7 +281,7 @@
 
     <div class='block' block_type="modulo">
         <div class="top_block">
-          Modulo
+          <p>Modulo</p>
           <button class="delete-button_x">x</button>
         </div>
         <div class="three_columns">
@@ -280,8 +290,8 @@
             <button class="in" _type="Integer"></button>
           </div>
           <div class="column">
-            <input style="width: 50px; margin: 1.4px;">
-            <input style="width: 50px; margin: 1.4px;">
+            <input style="margin: 1.4px;" placeholder="value">
+            <input style="margin: 1.4px;" placeholder="value">
           </div>
           <div class="column">
             <button class="out" _type="Integer"></button>
@@ -291,7 +301,7 @@
 
     <div class="block" block_type="operation_more">
       <div class="top_block">
-        Operation >
+        <p>Operation ></p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -300,8 +310,8 @@
           <button class="in" _type="Integer"></button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Boolean"></button>
@@ -311,7 +321,7 @@
 
     <div class="block" block_type="operation_less">
       <div class="top_block">
-        Operation <
+        <p>Operation <</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -320,8 +330,8 @@
           <button class="in" _type="Integer"></button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Boolean"></button>
@@ -331,7 +341,7 @@
 
     <div class="block" block_type="operation_equal">
       <div class="top_block">
-        Operation ==
+        <p>Operation ==</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -340,8 +350,8 @@
           <button class="in" _type="Integer"></button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Boolean"></button>
@@ -352,7 +362,7 @@
     
     <div class="block" block_type="operation_not_equal">
       <div class="top_block">
-        Operation !=
+        <p>Operation !=</p>
         <button class="delete-button_x">x</button>
       </div>
       <div class="three_columns">
@@ -361,8 +371,8 @@
           <button class="in" _type="Integer"></button>
         </div>
         <div class="column">
-          <input style="width: 50px; margin: 1.4px;">
-          <input style="width: 50px; margin: 1.4px;">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Boolean"></button>

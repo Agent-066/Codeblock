@@ -59,10 +59,12 @@ function to_sz(t){
         let out = block.querySelector(".out");
         if (out) out.setAttribute("_type", type);
       }
-      if(block_info.type == "const")  block_info.data.value = null;
-      block_info.output[0].type = type;
-      out = block.querySelector(".out");
-      out.setAttribute("_type", type)
+      
+      if (block_info.type != "variable"){
+        block_info.output[0].type = type;
+        out = block.querySelector(".out");
+        out.setAttribute("_type", type)
+      }
     })
   });
 
