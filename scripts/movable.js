@@ -5,10 +5,8 @@ let f_D = false;
 let X = 0;
 let Y = 0;
 
-// ИЗМЕНЕНО: line -> path, и используем createBezierPath
 function updateLinesForBlock(block) {
     let blockId = block.id;
-    // ИЗМЕНЕНО: line -> path
     let paths = svg.querySelectorAll('path[conn_block~="' + blockId + '"]');
     paths.forEach(function(path) {
         let conn = path.getAttribute('conn_but').split(' ');
@@ -22,13 +20,21 @@ function updateLinesForBlock(block) {
         let outRect = out_el.getBoundingClientRect();
         let inRect = in_el.getBoundingClientRect();
 
-        // ИЗМЕНЕНО: используем createBezierPath
         let x1 = outRect.left + outRect.width/2 - svgRect.left;
         let y1 = outRect.top + outRect.height/2 - svgRect.top;
         let x2 = inRect.left + inRect.width/2 - svgRect.left;
         let y2 = inRect.top + inRect.height/2 - svgRect.top;
+        let routePoints = [];
+        let routeData = path.getAttribute('data-route');
+        if (routeData) {
+            try {
+                routePoints = JSON.parse(routeData);
+            } catch(e) {
+                console.warn('Ошибка парсинга маршрута', e);
+            }
+        }
         
-        path.setAttribute('d', createBezierPath(x1, y1, x2, y2));
+        path.setAttribute('d', createRoutePath(x1, y1, x2, y2, routePoints));
     });
 }
 
