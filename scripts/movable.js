@@ -5,11 +5,13 @@ let f_D = false;
 let X = 0;
 let Y = 0;
 
+// ИЗМЕНЕНО: line -> path, и используем createBezierPath
 function updateLinesForBlock(block) {
     let blockId = block.id;
-    let lines = svg.querySelectorAll('line[conn_block~="' + blockId + '"]');
-    lines.forEach(function(line) {
-        let conn = line.getAttribute('conn_but').split(' ');
+    // ИЗМЕНЕНО: line -> path
+    let paths = svg.querySelectorAll('path[conn_block~="' + blockId + '"]');
+    paths.forEach(function(path) {
+        let conn = path.getAttribute('conn_but').split(' ');
         if (conn.length !== 2) return;
         let [from_id, to_id] = conn;
         let out_el = document.getElementById(from_id);
@@ -20,10 +22,13 @@ function updateLinesForBlock(block) {
         let outRect = out_el.getBoundingClientRect();
         let inRect = in_el.getBoundingClientRect();
 
-        line.setAttribute('x1', outRect.left + outRect.width/2 - svgRect.left);
-        line.setAttribute('y1', outRect.top + outRect.height/2 - svgRect.top);
-        line.setAttribute('x2', inRect.left + inRect.width/2 - svgRect.left);
-        line.setAttribute('y2', inRect.top + inRect.height/2 - svgRect.top);
+        // ИЗМЕНЕНО: используем createBezierPath
+        let x1 = outRect.left + outRect.width/2 - svgRect.left;
+        let y1 = outRect.top + outRect.height/2 - svgRect.top;
+        let x2 = inRect.left + inRect.width/2 - svgRect.left;
+        let y2 = inRect.top + inRect.height/2 - svgRect.top;
+        
+        path.setAttribute('d', createBezierPath(x1, y1, x2, y2));
     });
 }
 
