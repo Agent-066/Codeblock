@@ -4,7 +4,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="image_pdf/ss.jpg">
 <meta charset="UTF-8">
 <!-- Адаптивность  -->
-<meta name="viewport" content="width=device-width, initial-scale=1.2"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 <title>НАШ сайт</title>
 <link rel="stylesheet" href="css/general.css">
 <link rel="stylesheet" href="css/codeblock/codeblock.css">
@@ -30,14 +30,6 @@
       <div class="three_columns">
         <div class="column">
           <button onclick="START(this.closest('.movable').id)">Start</button>
-          <script>
-            function START(th){
-              clear_console();
-              clear_ERR();
-              couts = document.querySelectorAll("[block_type='cout']")
-              functions["event"]?.(th);
-            }
-          </script>
         </div>
         <div class="column">
           Start
@@ -90,9 +82,7 @@
           <button class="in" _type=""></button>
         </div>
         <div class="column">
-          <input placeholder="variable name" list="choose_or_input">
-          <datalist id="choose_or_input">
-          </datalist>
+          <input placeholder="variable name" list="global_datalist">
         </div>
         <div class="column">
           <button class="out" _type="Exec">▷</button>
@@ -109,25 +99,7 @@
         <div class="column">
         </div>
         <div class="column">
-          <input list="choose_or_input" placeholder="variable name">
-          <datalist id="choose_or_input">
-          </datalist>
-          <script>
-            function update_datalist() {
-              const datalist = document.getElementById('choose_or_input');
-              if (!datalist) return;
-
-              datalist.innerHTML = '';
-  
-              variables.forEach(variable => {
-                if (variable.name) {
-                  const option = document.createElement('option');
-                  option.value = variable.name;
-                  datalist.appendChild(option);
-                }
-              });
-            }
-          </script>
+          <input list="global_datalist" placeholder="variable name">
         </div>
         <div class="column">
           <button class="out" _type=""></button>
@@ -306,8 +278,8 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Integer"></button>
-          <button class="in" _type="Integer"></button>
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
         </div>
         <div class="column">
           <input style="margin: 1.4px;" placeholder="value">
@@ -326,8 +298,48 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Integer"></button>
-          <button class="in" _type="Integer"></button>
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="operation_more_equal">
+      <div class="top_block">
+        <p>Operation >=</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="operation_less_equal">
+      <div class="top_block">
+        <p>Operation <=</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
         </div>
         <div class="column">
           <input style="margin: 1.4px;" placeholder="value">
@@ -346,8 +358,8 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Integer"></button>
-          <button class="in" _type="Integer"></button>
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
         </div>
         <div class="column">
           <input style="margin: 1.4px;" placeholder="value">
@@ -367,8 +379,8 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button class="in" _type="Integer"></button>
-          <button class="in" _type="Integer"></button>
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
         </div>
         <div class="column">
           <input style="margin: 1.4px;" placeholder="value">
@@ -379,6 +391,68 @@
         </div>
       </div>
     </div>
+
+    <div class="block" block_type="or" >
+      <div class="top_block">
+        <p>Or</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Boolean"></button>
+          <button class="in" _type="Boolean"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="and" >
+      <div class="top_block">
+        <p>And</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Boolean"></button>
+          <button class="in" _type="Boolean"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="block" block_type="invert" >
+      <div class="top_block">
+        <p>Invert</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Boolean"></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </div>
 
   <div class="safe-zone">
@@ -418,5 +492,31 @@
     </div>
     <div id="output-messages"></div>
   </div>
+  <datalist id="global_datalist">
+  </datalist>
+
+  <script>
+    function START(th){
+      clear_console();
+      clear_ERR();
+      couts = document.querySelectorAll("[block_type='cout']")
+      functions["event"]?.(th);
+    }
+
+    function update_datalist() {
+      datalist = document.getElementById('global_datalist');
+      if (!datalist) return;
+      datalist.innerHTML = '';
+      if (typeof variables !== 'undefined'){
+        variables.forEach(variable => {
+          if (variable.name){
+            option = document.createElement('option');
+            option.value = variable.name;
+            datalist.appendChild(option);
+          }
+        })
+      }
+    }
+  </script>
 </body>
 </html>

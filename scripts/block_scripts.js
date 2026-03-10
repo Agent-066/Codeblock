@@ -1,6 +1,17 @@
 variables = [];
 blocks = [];
 
+function toBoolean(val){
+    if (typeof val === 'string'){
+        let lower = val.trim().toLowerCase();
+        if (lower === '' || lower === 'false' || lower === '0') return false;
+        return true;
+    }
+    if (typeof val === 'number') return val !== 0;
+    if (typeof val === 'boolean') return val;
+    return false;
+}
+
 safe = document.querySelector(".safe-zone");
 
 ERRORS = new Set();
@@ -58,7 +69,6 @@ safe.addEventListener("mousedown", safe_mousedown);
 
 function clear_console(){
     consoleout = document.querySelector("#output-messages");
-    if (!console) return;
     Array.from(consoleout.children).forEach(itm => {
         itm.remove();
     })
@@ -150,7 +160,8 @@ function add_inputs(blk_el){
     let block = blocks.find(b => b.id == blk_el.id);
 
     if (!block || block.type != 'sum' && block.type != 'multiplication' &&
-        block.type != 'subtraction' && block.type != 'division')
+        block.type != 'subtraction' && block.type != 'division' && 
+        block.type != 'or' && block.type != 'and')
         { return; }
 
     let left_col = blk_el.querySelector('.three_columns .column:first-child');
@@ -160,7 +171,8 @@ function add_inputs(blk_el){
 
     let in_b = document.createElement('button');
     in_b.className = 'in';
-    in_b.setAttribute('_type', 'Integer');
+    if (block.type != 'or' && block.type != 'and') in_b.setAttribute('_type', 'Integer');
+    else in_b.setAttribute('_type', 'Boolean')
     in_b.setAttribute('onclick', 'pin_in(this)');
     in_b.id = 'in_' + but_in_id++;
     left_col.insertBefore(in_b, add);
@@ -199,35 +211,41 @@ function delete_connection(in_ids, out_ids){
 
 function delete_block(t){
     let block = t.parentElement.parentElement;
-    i = Number(block.id);
+    let i = Number(block.id);
 
-    block_info = blocks.find(itm => itm.id == i);
+    let block_info = blocks.find(itm => itm.id == i);
 
-    id_list.splice(id_list.indexOf(i), 1)
+    id_list.splice(id_list.indexOf(i), 1);
     id_cur.unshift(i);
 
     let lines_remove = svg.querySelectorAll('line[conn_block~="' + i + '"]');
     for (l of lines_remove) l.remove();
 
-    in_ids = [];
-    out_ids = [];
-    ins = block.querySelectorAll(".in");
-    outs = block.querySelectorAll(".out");
+    let in_ids = [];
+    let out_ids = [];
+    let ins = block.querySelectorAll(".in");
+    let outs = block.querySelectorAll(".out");
     for (itm of ins) in_ids.push(itm.id);
     for (itm of outs) out_ids.push(itm.id);
 
     delete_connection(in_ids, out_ids);
 
-    if (block_info.type == "variable") variables = variables.filter(v => v.id_block != i);
+    if (block_info && block_info.type == "variable"){
+        variables = variables.filter(v => v.id_block != i);
+        update_datalist();
+    }
 
-    blocks.forEach(itm_0 => {
-        flag = itm_0.Exec.find(itm_1 => itm_1 == i);
-        if (flag){
-            itm_0.Exec.splice(itm_0.Exec.findIndex(itm_2 => itm_2 == i), 1);
+    blocks.forEach(blk => {
+        let flag = blk.Exec.findIndex(id => id == i);
+        if (flag !== -1){
+            blk.Exec.splice(flag, 1);
         }
-    })
+    });
 
-    blocks.splice(i, 1);
+    let blockIndex = blocks.findIndex(b => b.id == i);
+    if (blockIndex !== -1){
+        blocks.splice(blockIndex, 1);
+    }
 
     block.remove();
 }
@@ -237,7 +255,6 @@ function add_to_blocks(th){
     out_id = [];
     all_in = th.querySelectorAll(".in");
     all_out = th.querySelectorAll(".out");
-    all_inputs = th.querySelectorAll("input");
 
     for (i of all_in){in_id.push({id: i.id, type: i.getAttribute("_type"), connection: []})};
 
@@ -259,9 +276,6 @@ function add_to_blocks(th){
         case "get":
             data = {varname: null};
             break;
-        case "sum":
-            data = [];
-            break;
         case "branch":
             data = {};
             break;
@@ -271,28 +285,19 @@ function add_to_blocks(th){
         case "const":
             data = {type: "Integer", value: null};
             break;
+        case "sum":
         case "multiplication":
-            data = []
-            break;
         case 'subtraction':
-            data = []
-            break;
         case 'division':
-            data = []
-            break;
         case 'modulo':
-            data = []
-            break;
         case 'operation_more':
-            data = []
-            break;
         case 'operation_less':
-            data = []
-            break;
+        case 'operation_more_equal':
+        case 'operation_less_equal':
         case 'operation_equal':
-            data = []
-            break;
         case 'operation_not_equal':
+        case 'or':
+        case 'and':
             data = []
             break;
     }
@@ -363,13 +368,6 @@ functions = {
         block = blocks.find(itm => itm.id == id);
 
         go_to(block.Exec[0], id);
-    },
-    
-    variable: (id) => {
-        block = blocks.find(itm => itm.id == id);
-        info = variables.find(itm => itm.id_block == id)
-
-        return info ? info.name : null;
     },
 
     set: (id) => {
@@ -514,29 +512,40 @@ functions = {
         let data = block.data || [];
         let t = null;
 
-
-        if (values[0] !== undefined){
+        if (values[0] !== undefined) {
             t = values[0];
-        }
-        else if (data[0]){
+        } else if (data[0]) {
             t = data[0];
         }
 
         if (t === null) {
-            show_ERR(`Не указано делимое в блоке с id ${block.id}`, block.id)
+            show_ERR(`Не указано делимое в блоке с id ${block.id}`, block.id);
             return null;
         }
 
-        for (let i = 1; i < values.length; i++){
+        for (let i = 1; i < values.length; i++) {
             let val = values[i];
             if (val === undefined){
-                if (data !== undefined){
+                if (data[i] !== undefined){
                     val = parseFloat(data[i]);
                 }
-                else val = NaN;
+                else{
+                    val = NaN;
+            }}
+            else{
+                val = parseFloat(val);
             }
-            else val = parseFloat(val);
+
+            if (val === 0){
+                show_ERR(`Деление на ноль в блоке Division (id: ${id})`, id);
+                return Infinity;
+            }
+
             if (!isNaN(val) && val !== 0) t /= val;
+            else if (isNaN(val)){
+                t = NaN;
+                break;
+            }
         }
         return t;
     },
@@ -615,6 +624,30 @@ functions = {
         return !isNaN(a) && !isNaN(b) && a < b;
     },
 
+    operation_less_equal: (id, values) => {
+        let block = blocks.find(b => b.id == id);
+        let data_blk = block.data;
+
+        let temp_0 = null;
+        let temp_1 = null;
+
+        if (values[0] !== undefined && values[1] !== undefined){
+            temp_0 = values[0];
+            temp_1 = values[1];
+        }
+        else if (data_blk[0] !== undefined && data_blk[1] !== undefined){
+            temp_0 = data_blk[0];
+            temp_1 = data_blk[1];
+        }
+        else{
+            return false;
+        }
+        
+        let a = parseFloat(temp_0);
+        let b = parseFloat(temp_1);
+        return !isNaN(a) && !isNaN(b) && a <= b;
+    },
+
     operation_equal: (id, values) => {
         let block = blocks.find(b => b.id == id);
         let data_blk = block.data;
@@ -685,6 +718,54 @@ functions = {
         let a = parseFloat(temp_0);
         let b = parseFloat(temp_1);
         return !isNaN(a) && !isNaN(b) && a > b;
+    },
+
+    operation_more_equal: (id, values) => {
+        let block = blocks.find(b => b.id == id);
+        let data_blk = block.data;
+
+        let temp_0 = null;
+        let temp_1 = null;
+
+        if (values[0] !== undefined && values[1] !== undefined){
+            temp_0 = values[0];
+            temp_1 = values[1];
+        }
+        else if (data_blk[0] !== undefined && data_blk[1] !== undefined){
+            temp_0 = data_blk[0];
+            temp_1 = data_blk[1];
+        }
+        else{
+            return false;
+        }
+
+        let a = parseFloat(temp_0);
+        let b = parseFloat(temp_1);
+        return !isNaN(a) && !isNaN(b) && a >= b;
+    },
+
+    or: (id, values) => {
+        let block = blocks.find(b => b.id == id);
+        let data = block.data || [];
+        for (let i = 0; i < values.length; i++) {
+            let val = values[i] !== undefined ? values[i] : data[i];
+            if (toBoolean(val)) return true;
+        }
+        return false;
+    },
+
+    and: (id, values) => {
+        let block = blocks.find(b => b.id == id);
+        let data = block.data || [];
+        for (let i = 0; i < values.length; i++) {
+            let val = values[i] !== undefined ? values[i] : data[i];
+            if (!toBoolean(val)) return false;
+        }
+        return true;
+    },
+    
+    invert: (id, values) => {
+        return !values[0];
     },
 
     branch: (id) => {

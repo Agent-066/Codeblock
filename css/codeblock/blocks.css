@@ -220,7 +220,8 @@ button[_type="Float"]:hover {
 [block_type='sum'], [block_type='multiplication'], 
 [block_type='subtraction'], [block_type='division'], [block_type='modulo'], 
 [block_type='operation_more'], [block_type='operation_less'], [block_type='operation_equal'], 
-[block_type='operation_not_equal'], [block_type='const']{
+[block_type='operation_not_equal'], [block_type='operation_less_equal'], [block_type='operation_more_equal'],
+[block_type='const'], [block_type='or'], [block_type='and'], [block_type='invert']{
   background: 
               linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
               linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
