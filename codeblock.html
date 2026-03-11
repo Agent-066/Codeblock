@@ -465,16 +465,6 @@
   <div class="grid-toggle-wr">
     <button id="grid-toggle-btn" class="grid-toggle-btn">⊞</button>
   </div>
-  <script src="scripts/save_block.js"></script>
-  <script src="scripts/block_scripts.js"></script>
-  <!--Размещение блоков-->
-  <script src="scripts/placement_of_blocks.js"></script>
-  <!--Удаление блоков + закрепление ID и + -->
-  <script src="scripts/id_block.js"></script>
-  <!--Передвижение (очевидно)-->
-  <script src="scripts/movable.js"></script>
-  <!--Сетка off_on -->
-  <script src="scripts/grid.js"></script>
   <div class="side-button-1-wr">
     <label class="side-button-1" for="side-checkbox">
       <div class="side-b side-open">Ξ</div>
@@ -495,28 +485,6 @@
   <datalist id="global_datalist">
   </datalist>
 
-  <script>
-    function START(th){
-      clear_console();
-      clear_ERR();
-      couts = document.querySelectorAll("[block_type='cout']")
-      functions["event"]?.(th);
-    }
-
-    function update_datalist() {
-      datalist = document.getElementById('global_datalist');
-      if (!datalist) return;
-      datalist.innerHTML = '';
-      if (typeof variables !== 'undefined'){
-        variables.forEach(variable => {
-          if (variable.name){
-            option = document.createElement('option');
-            option.value = variable.name;
-            datalist.appendChild(option);
-          }
-        })
-      }
-    }
-  </script>
+  <script src="scripts/Main.js"></script>
 </body>
 </html>
