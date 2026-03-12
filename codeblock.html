@@ -29,7 +29,6 @@
       </div>
       <div class="three_columns">
         <div class="column">
-          <button onclick="START(this.closest('.movable').id)">Start</button>
         </div>
         <div class="column">
           Start
@@ -444,13 +443,182 @@
           <button class="in" _type="Boolean"></button>
         </div>
         <div class="column">
-          <input style="margin: 1.4px;" placeholder="value">
         </div>
         <div class="column">
           <button class="out" _type="Boolean"></button>
         </div>
       </div>
     </div>
+
+    <div class="block" block_type="for_loop">
+  <div class="top_block">
+    <p>For Loop</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Exec">▷</button>
+      <button class="in" _type="Integer"></button> <!-- start -->
+      <button class="in" _type="Integer"></button> <!-- end -->
+      <button class="in" _type="Integer"></button> <!-- step -->
+    </div>
+    <div class="column">
+      <input placeholder="start">
+      <input placeholder="end">
+      <input placeholder="step" value="1">
+    </div>
+    <div class="column">
+      <button class="out" _type="Integer"></button> <!-- index -->
+      <button class="out" _type="Exec">▷</button> <!-- loop body -->
+      <button class="out" _type="Exec">▷</button> <!-- completed -->
+    </div>
+  </div>
+</div>
+
+<!-- While Loop -->
+<div class="block" block_type="while_loop">
+  <div class="top_block">
+    <p>While Loop</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Exec">▷</button>
+      <button class="in" _type="Boolean"></button> <!-- condition -->
+    </div>
+    <div class="column">
+      <input placeholder="condition?">
+    </div>
+    <div class="column">
+      <button class="out" _type="Exec">▷</button> <!-- loop body -->
+      <button class="out" _type="Exec">▷</button> <!-- completed -->
+    </div>
+  </div>
+</div>
+
+<!-- Get Element -->
+<div class="block" block_type="get_element">
+  <div class="top_block">
+    <p>Get Element</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type="Integer"></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="index">
+    </div>
+    <div class="column">
+      <button class="out" _type=""></button> <!-- элемент -->
+    </div>
+  </div>
+</div>
+
+<!-- Set Element -->
+<div class="block" block_type="set_element">
+  <div class="top_block">
+    <p>Set Element</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type="Integer"></button>
+      <button class="in" _type=""></button> <!-- значение -->
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="index">
+      <input placeholder="value">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button> <!-- изменённый массив -->
+    </div>
+  </div>
+</div>
+
+<!-- Array Length -->
+<div class="block" block_type="array_length">
+  <div class="top_block">
+    <p>Array Length</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+    </div>
+    <div class="column">
+      <button class="out" _type="Integer"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Make Array -->
+<div class="block" block_type="make_array">
+  <div class="top_block">
+    <p>Make Array</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type=""></button>
+      <button class="add">+</button>
+    </div>
+    <div class="column">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Append -->
+<div class="block" block_type="append">
+  <div class="top_block">
+    <p>Append</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type=""></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="element">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Index -->
+<div class="block" block_type="remove_index">
+  <div class="top_block">
+    <p>Remove Index</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type="Integer"></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="index">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button>
+    </div>
+  </div>
+</div>
   </div>
 
   </div>

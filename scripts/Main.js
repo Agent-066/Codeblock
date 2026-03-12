@@ -100,12 +100,67 @@
         if ((s_type == 'Integer' || s_type == 'Float') && (t_type == "Integer" || t_type == 'Float')) return true;
         if ((s_type == 'Boolean' && (t_type == "Integer" || t_type == 'Float')) ||
             (t_type == 'Boolean' && (s_type == 'Integer' || s_type == 'Float'))) return true;
+        if (s_type == 'Array' && t_type == 'Array') return true;
+        if (s_type == 'Array' || t_type == 'Array') return false;
         return s_type == t_type;
     }
 
+    function update_get_element(blockId) {
+        let block = Main.blocks.find(b => b.id == blockId);
+        if (!block || block.type !== 'get_element') return;
+
+        let arrayInput = block.input.find(inp => inp.type === 'Array');
+        if (!arrayInput) return;
+
+        let elementType = null;
+
+        if (arrayInput.connection.length > 0) {
+
+            let conn = arrayInput.connection[0];
+            let sourceBlock = Main.blocks.find(b => b.id == conn.from_block);
+            let sourceOut = sourceBlock.output.find(o => o.id == conn.from);
+            if (sourceOut && sourceOut.type === 'Array') {
+                if (sourceBlock.type === 'variable') {
+                    let variable = Main.variables.find(v => v.id_block == sourceBlock.id);
+                    if (variable) elementType = variable.elementType;
+                    
+                }
+                else if (sourceBlock.type === 'get') {
+                    let varName = sourceBlock.data.varname;
+                    let variable = Main.variables.find(v => v.name == varName);
+                    if (variable) elementType = variable.elementType;
+                }
+                else if (sourceBlock.type === 'make_array') {
+                    elementType = sourceBlock.data.elementType || 'Integer';
+                }
+                else if (sourceBlock.type === 'set_element' || sourceBlock.type === 'append' ||
+                         sourceBlock.type === 'remove_index' || sourceBlock.type === 'get_element') {
+                    console.warn('Не удалось точно определить тип элемента, используется Integer');
+                    elementType = 'Integer';
+                }
+            }
+        }
+        else if (block.data.array) {
+            let varName = block.data.array;
+            let variable = Main.variables.find(v => v.name == varName && v.type === 'Array');
+            if (variable) elementType = variable.elementType;
+        }
+
+        if (elementType) {
+            let outPin = block.output[0];
+            if (outPin.type !== elementType) {
+                outPin.type = elementType;
+                let outEl = document.getElementById(outPin.id);
+                if (outEl) outEl.setAttribute('_type', elementType);
+                update_connected(block.id, elementType);
+            }
+        }
+    }
+
+
     function createRoutePath(x1, y1, x2, y2, points = []){
         if (points.length === 0){
-            let dx = Math.abs(x2 - x1) * 0.5;
+            let dx = Math.max(50, Math.abs(x2 - x1) * 0.5);
             return `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
         }
 else{
@@ -166,6 +221,16 @@ else{
         }
         else if(i_block.type == "set"){
             i_block.data.varname = e.target.value;
+            let varName = e.target.value;
+            let variable = Main.variables.find(v => v.name === varName);
+            if (variable) {
+                let inPins = el.querySelectorAll('.in');
+                if (inPins.length >= 2) {
+                    let valuePin = inPins[1];
+                    valuePin.setAttribute('_type', variable.type);
+                    i_block.input[1].type = variable.type;
+                }
+            }
         }
         else if(i_block.type == "const"){
             if (e.target.type == 'checkbox') i_block.data.value = e.target.checked;
@@ -177,55 +242,86 @@ else{
             let raw_n = input_.split(',').map(s => s.trim()).filter(s => s.length > 0);
             let b_id = i_block.id;
             let select_type = i_block.data.select;
+            let structure = i_block.data.structure.split(" ") || " Single";
+            structure = structure[structure.length - 1]
+            let actualType = structure === "Array" ? "Array" : select_type;
+            let elementType = structure === "Array" ? select_type : null;
+
+            console.log(structure)
+
             const regex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
             let valid_names = [];
             let errors = [];
 
-            raw_n.forEach(name => {
-                if (!regex.test(name)){
-                    errors.push(`Имя "${name}" содержит недопустимые символы или начинается с цифры`);
-                }
-                else{
-                    let vari = Main.variables.find(v => v.name === name && v.id_block !== b_id);
-                    if (vari){
-                        errors.push(`Имя "${name}" уже используется в другом блоке`);
-                    }
-                    else{
-                        valid_names.push(name);
-                    }
-                }
-            });
-
-            if (errors.length > 0){
-                el.style.border = "2px solid red";
-                el.title = errors.join('; ');
-                errors.forEach(err => show_ERR(err, b_id));
+        raw_n.forEach(name => {
+            if (!regex.test(name)){
+                errors.push(`Имя "${name}" содержит недопустимые символы или начинается с цифры`);
             }
             else{
-                el.style.border = "";
-                el.title = "";
-            }
-
-            Main.variables = Main.variables.filter(v => {
-                if (v.id_block !== b_id) return true;
-                return valid_names.includes(v.name);
-            });
-
-            valid_names.forEach(name => {
-                let vari = Main.variables.find(v => v.id_block === b_id && v.name === name);
-                if (!vari){
-                    Main.variables.push({
-                        id_block: b_id,
-                        name: name,
-                        type: select_type,
-                        value: null
-                    });
+                let vari = Main.variables.find(v => v.name === name && v.id_block !== b_id);
+                if (vari){
+                    errors.push(`Имя "${name}" уже используется в другом блоке`);
                 }
                 else{
-                    vari.type = select_type;
+                    valid_names.push(name);
                 }
+            }
+        });
+
+        if (errors.length > 0){
+            el.style.border = "2px solid red";
+            el.title = errors.join('; ');
+            errors.forEach(err => show_ERR(err, b_id));
+        }
+        else{
+            el.style.border = "";
+            el.title = "";
+        }
+
+        // Удаляем старые переменные этого блока
+        Main.variables = Main.variables.filter(v => v.id_block !== b_id);
+
+        // Создаём новые
+        valid_names.forEach(name => {
+            Main.variables.push({
+                id_block: b_id,
+                name: name,
+                type: actualType,
+                elementType: elementType,
+                value: structure === "Array" ? [] : null
             });
+            });
+
             update_datalist();
+
+            // Обновляем блоки Get, которые ссылаются на эти переменные
+            valid_names.forEach(name => {
+                let g_blocks = Main.blocks.filter(b => b.type === 'get' && b.data.varname === name);
+                g_blocks.forEach(itm => {
+                    if (itm.output.length > 0){
+                        itm.output[0].type = actualType;
+                        let out_el = document.getElementById(itm.output[0].id);
+                        if (out_el) out_el.setAttribute("_type", actualType);
+                    }
+                    update_connected(itm.id, actualType);
+                });
+            });
+        }
+        else if (i_block.type === "make_array") {
+            let inputs = el.querySelectorAll('.column:nth-child(2) input');
+            let values = [];
+            inputs.forEach(inp => values.push(inp.value));
+            i_block.data.values = values;
+        }
+        else if (i_block.type === "get_element") {
+            let input = e.target;
+            let placeholder = input.placeholder;
+            if (placeholder === "array") {
+                i_block.data.array = input.value;
+                update_get_element(i_block.id);
+            } else if (placeholder === "index") {
+                i_block.data.index = input.value;
+            }
         }
         else{
             if (i_block.data.input != undefined) i_block.data.input = e.target.value;
@@ -306,7 +402,7 @@ else{
 
         switch(type){
             case "event": data = {}; break;
-            case "variable": data = {varname: null, select: "Boolean"}; break;
+            case "variable": data = { varname: null, select: "Boolean", structure: "Single" }; break;
             case "set": data = {input: null}; break;
             case "get": data = {varname: null}; break;
             case "branch": data = {}; break;
@@ -317,6 +413,14 @@ else{
             case "operation_more_equal": case "operation_less_equal":
             case "operation_equal": case "operation_not_equal":
             case "or": case "and": data = []; break;
+            case "for_loop": data = { startIndex: null, endIndex: null, step: 1, currentIndex: 0 }; break;
+            case "while_loop": data = { condition: null }; break;
+            case "get_element": data = { array: null, index: null }; break;
+            case "set_element": data = { array: null, index: null, value: null }; break;
+            case "array_length": data = { array: null }; break;
+            case "make_array": data = { values: [], elementType: "Integer" }; break;
+            case "append": data = { array: null, element: null }; break;
+            case "remove_index": data = { array: null, index: null }; break;
         }
 
         Main.blocks.push({
@@ -423,7 +527,7 @@ else{
                 const s_blk = Main.blocks.find(b => b.id == s_blk_id);
                 const out = s_blk.output.find(o => o.id == s_out_id);
                 if (out && functions[s_blk.type]){
-                    const val = functions[s_blk.type](s_blk_id, s_value, out.type);
+                    const val = functions[s_blk.type](s_blk_id, s_value);
                     inp_values.push(val);
                 }
                 else{
@@ -652,7 +756,125 @@ else{
                 let next_id = out.connection[0].to_block;
                 go_to(next_id, id);
             }
+        },
+        for_loop: function(id, values){
+            if (arguments.length === 1){
+                // Вызов по Exec
+                let block = Main.blocks.find(b => b.id == id);
+                let vals = reverse_go_to(id, new Set());
+                let start = vals[0] !== undefined ? parseInt(vals[0]) : (block.data.startIndex !== null ? parseInt(block.data.startIndex) : 0);
+                let end = vals[1] !== undefined ? parseInt(vals[1]) : (block.data.endIndex !== null ? parseInt(block.data.endIndex) : 0);
+                let step = vals[2] !== undefined ? parseInt(vals[2]) : (block.data.step !== null ? parseInt(block.data.step) : 1);
+                if (isNaN(start)) start = 0;
+                if (isNaN(end)) end = 0;
+                if (isNaN(step) || step === 0) step = 1;
+
+                let outLoopBody = block.output[1];
+                let outCompleted = block.output[2];
+
+                for (let i = start; (step > 0 ? i <= end : i >= end); i += step){
+                    block.data.currentIndex = i;
+                    if (outLoopBody.connection.length > 0){
+                        go_to(outLoopBody.connection[0].to_block, id);
+                    }
+                }
+                block.data.currentIndex = null;
+                if (outCompleted.connection.length > 0){
+                    go_to(outCompleted.connection[0].to_block, id);
+                }
+            }
+            else{
+                let block = Main.blocks.find(b => b.id == id);
+                return block.data.currentIndex;
+            }
+        },
+
+        while_loop: function(id, values){
+            if (arguments.length === 1){
+                let block = Main.blocks.find(b => b.id == id);
+                let outLoopBody = block.output[0]; // loop body
+                let outCompleted = block.output[1]; // completed
+                let condVals = reverse_go_to(id, new Set());
+                let condition = toBoolean(condVals[0]);
+                while (condition){
+                    if (outLoopBody.connection.length > 0) go_to(outLoopBody.connection[0].to_block, id);
+                    condVals = reverse_go_to(id, new Set());
+                    condition = toBoolean(condVals[0]);
+                    }
+                if (outCompleted.connection.length > 0) go_to(outCompleted.connection[0].to_block, id);
+            }   
+            else return null;
+        },
+
+    get_element: function(id, values){
+        let arr = values[0];
+        let idx = parseInt(values[1]);
+        if (!Array.isArray(arr)){
+            show_ERR(`Первый вход Get Element должен быть массивом`, id);
+            return undefined;
         }
+        if (isNaN(idx) || idx < 0 || idx >= arr.length){
+            show_ERR(`Индекс ${idx} вне диапазона массива`, id);
+            return undefined;
+        }
+        return arr[idx];
+},
+
+set_element: function(id, values){
+    let arr = values[0];
+    let idx = parseInt(values[1]);
+    let val = values[2];
+    if (!Array.isArray(arr)){
+        show_ERR(`Первый вход Set Element должен быть массивом`, id);
+        return arr;
+    }
+    if (isNaN(idx) || idx < 0 || idx >= arr.length){
+        show_ERR(`Индекс ${idx} вне диапазона массива`, id);
+        return arr;
+    }
+    arr[idx] = val;
+    return arr; // возвращаем тот же массив (изменённый)
+},
+
+array_length: function(id, values){
+    let arr = values[0];
+    if (!Array.isArray(arr)){
+        show_ERR(`Вход Array Length должен быть массивом`, id);
+        return 0;
+    }
+    return arr.length;
+},
+
+make_array: function(id, values){
+    // values - массив значений входов
+    return values.slice(); // копируем
+},
+
+append: function(id, values){
+    let arr = values[0];
+    let elem = values[1];
+    if (!Array.isArray(arr)){
+        show_ERR(`Первый вход Append должен быть массивом`, id);
+        return arr;
+    }
+    arr.push(elem);
+    return arr;
+},
+
+remove_index: function(id, values){
+    let arr = values[0];
+    let idx = parseInt(values[1]);
+    if (!Array.isArray(arr)){
+        show_ERR(`Первый вход Remove Index должен быть массивом`, id);
+        return arr;
+    }
+    if (isNaN(idx) || idx < 0 || idx >= arr.length){
+        show_ERR(`Индекс ${idx} вне диапазона массива`, id);
+        return arr;
+    }
+    arr.splice(idx, 1);
+    return arr;
+}
     };
 
     // ---РАБОТА С ПИНАМИ---
@@ -763,6 +985,13 @@ else{
             Main.route_points = [];
             Main.flag_1 = false;
             Main.safe.classList.remove('connecting-mode');
+            
+            if (Main.block_2.type === 'get_element') {
+                let targetIn = Main.block_2.input.find(inp => inp.id == t.id);
+                if (targetIn && targetIn.type === 'Array') {
+                    update_get_element(Main.block_2.id);
+                }
+            }
         }
         else{
             Main.t_2 = t;
@@ -876,6 +1105,9 @@ else{
 
     // ---ПЕРЕДВИЖЕНИЕ ПО SAFE-ZONE---
     function safe_mousedown(e){
+        if (document.activeElement && !e.target.closest('input, select, button')){
+            document.activeElement.blur();
+        }
         if (!e.target.closest(".safe-zone") || e.target.closest(".movable") || e.target.closest("circle")) return;
         Main.f_S = true;
 
@@ -888,56 +1120,56 @@ else{
         e.preventDefault();
     }
 
-    function safe_mousemove(e){
-        if (!Main.f_S) return;
-        let dX = e.clientX - Main.startX;
-        let dY = e.clientY - Main.startY;
+        function safe_mousemove(e){
+            if (!Main.f_S) return;
+            let dX = e.clientX - Main.startX;
+            let dY = e.clientY - Main.startY;
 
-        Main.safe.scrollLeft = Main.start_Sc_left - dX;
-        Main.safe.scrollTop = Main.start_Sc_top - dY;
+         Main.safe.scrollLeft = Main.start_Sc_left - dX;
+            Main.safe.scrollTop = Main.start_Sc_top - dY;
 
-        Main.safe.addEventListener("mouseup", safe_mouseup);
-        Main.safe.addEventListener("mouseleave", safe_mouseleave);
-    }
-
-    function safe_mouseup(){
-        if (Main.f_S){
-            Main.f_S = false;
-            Main.safe.removeEventListener("mousemove", safe_mousemove);
+            Main.safe.addEventListener("mouseup", safe_mouseup);
+            Main.safe.addEventListener("mouseleave", safe_mouseleave);
         }
-    }
 
-    function safe_mouseleave(){
-        if (Main.f_S){
-            Main.f_S = false;
-            Main.safe.removeEventListener("mousemove", safe_mousemove);
+        function safe_mouseup(){
+            if (Main.f_S){
+                Main.f_S = false;
+                Main.safe.removeEventListener("mousemove", safe_mousemove);
+            }
         }
-    }
 
-    // ---КОНСОЛЬ ВЫВОДА---
-    function printToConsole(value){
-        let cons_el = document.getElementById('output-console');
-        let msg_el = document.getElementById('output-messages');
-        if (!cons_el || !msg_el) return;
-
-        console.log(value);
-        cons_el.style.display = 'block';
-        let line = document.createElement('div');
-        line.textContent = String(value);
-        line.style.borderBottom = '1px solid #333';
-        line.style.padding = '2px 0';
-        msg_el.appendChild(line);
-        msg_el.scrollTop = msg_el.scrollHeight;
-    }
-
-    function clearOutputConsole(){
-        let msg_el = document.getElementById('output-messages');
-        if (msg_el) msg_el.innerHTML = '';
-        let cons_el = document.getElementById('output-console');
-        if (cons_el && msg_el.children.length === 0){
-            cons_el.style.display = 'none';
+        function safe_mouseleave(){
+            if (Main.f_S){
+                Main.f_S = false;
+                Main.safe.removeEventListener("mousemove", safe_mousemove);
+            }
         }
-    }
+
+        // ---КОНСОЛЬ ВЫВОДА---
+        function printToConsole(value){
+            let cons_el = document.getElementById('output-console');
+            let msg_el = document.getElementById('output-messages');
+            if (!cons_el || !msg_el) return;
+
+            console.log(value);
+            cons_el.style.display = 'block';
+            let line = document.createElement('div');
+            line.textContent = String(value);
+            line.style.borderBottom = '1px solid #333';
+            line.style.padding = '2px 0';
+            msg_el.appendChild(line);
+            msg_el.scrollTop = msg_el.scrollHeight;
+        }
+
+        function clearOutputConsole(){
+            let msg_el = document.getElementById('output-messages');
+            if (msg_el) msg_el.innerHTML = '';
+            let cons_el = document.getElementById('output-console');
+            if (cons_el && msg_el.children.length === 0){
+                cons_el.style.display = 'none';
+            }
+        }
 
     // ---СОЗДАНИЕ БЛОКОВ---
     function to_sz(t){
@@ -958,43 +1190,47 @@ else{
         }
 
         let selects = c_t.querySelectorAll("select");
-        selects.forEach(select => {
+        selects.forEach((select, index) => {
             select.onclick = e => e.stopPropagation();
             select.onmousedown = e => e.stopPropagation();
             select.addEventListener("change", function(){
-                let type = this.value;
-                let block = this.closest(".movable");
-                let block_info = Main.blocks.find(itm => itm.id == block.id);
-                block_info.data.select = type;
-                if (block_info.type == "variable"){
-                    Main.variables.forEach(v => { if (v.id_block == block.id) v.type = type; });
-                    update_datalist();
-                    let varName_input = block.querySelector('input[name="Var"]');
-                    let varName = varName_input ? varName_input : null;
-                    if (varName){
-                        let g_blocks = Main.blocks.filter(b => b.type === 'get' && b.data.varname === varName);
-                        g_blocks.forEach(itm => {
-                            if (itm.output.length > 0){
-                                itm.output[0].type = type;
-                                let out_el = document.getElementById(itm.output[0].id);
-                                if (out_el) out_el.setAttribute("_type", type);
-                            }
-                            update_connected(itm.id, type);
-                        });
-                    }
+        // Если это первый селект (тип)
+        console.log(index)
+        if (index === 0){
+            let type = this.value;
+            let block = this.closest(".movable");
+            let block_info = Main.blocks.find(itm => itm.id == block.id);
+            block_info.data.select = type;
+    
+            if (block_info.type == "variable") {
+                let nameInput = block.querySelector('input[name="Var"]');
+                if (nameInput){
+                    let event = new Event('input', { bubbles: true });
+                    nameInput.dispatchEvent(event);
                 }
+            }
+            else{
                 if (block_info.output.length > 0){
                     block_info.output[0].type = type;
                     let out = block.querySelector(".out");
                     if (out) out.setAttribute("_type", type);
                 }
-                if (block_info.type != "variable"){
-                    block_info.output[0].type = type;
-                    let out = block.querySelector(".out");
-                    if (out) out.setAttribute("_type", type);
-                }
-            });
-        });
+            }
+        }
+        else if (index === 1) {
+            let struct = this.value;
+            console.log(struct)
+            let block = this.closest(".movable");
+            let block_info = Main.blocks.find(itm => itm.id == block.id);
+            block_info.data.structure = struct;
+            let nameInput = block.querySelector('input[name="Var"]');
+            if (nameInput) {
+                let event = new Event('input', { bubbles: true });
+                nameInput.dispatchEvent(event);
+            }
+        }
+    })
+})
 
         let in_t = c_t.querySelectorAll(".in");
         in_t.forEach(itm => {
@@ -1032,7 +1268,7 @@ else{
             input.addEventListener("input", funct_input);
         });
 
-        if (['sum','multiplication','subtraction','division','or','and'].includes(c_t.getAttribute('block_type'))){
+        if (['sum','multiplication','subtraction','division','or','and','make_array'].includes(c_t.getAttribute('block_type'))){
             let add_b = c_t.querySelector('.add');
             if (add_b){
                 add_b.onclick = function(e){
@@ -1078,15 +1314,22 @@ else{
             }
             select.onchange = function(){
                 update_const(this.value);
-                update_connected(block.id, this.value);
+                update_connected(this.parentNode.parentNode.parentNode.id, this.value);
             };
             update_const('Integer');
+        }
+
+        if (c_t.getAttribute('block_type') === 'get_element') {
+            let arrayInput = Array.from(c_t.querySelectorAll('input')).find(inp => inp.placeholder === 'array');
+            if (arrayInput) {
+                arrayInput.setAttribute('list', 'global_datalist');
+            }
         }
     }
 
     function add_inputs(blk_el){
         let block = Main.blocks.find(b => b.id == blk_el.id);
-        if (!block || !['sum','multiplication','subtraction','division','or','and'].includes(block.type)) return;
+        if (!block || !['sum','multiplication','subtraction','division','or','and','make_array'].includes(block.type)) return;
 
         let left_col = blk_el.querySelector('.three_columns .column:first-child');
         let right_col = blk_el.querySelector('.three_columns .column:nth-child(2)');
@@ -1095,22 +1338,23 @@ else{
 
         let in_b = document.createElement('button');
         in_b.className = 'in';
-        in_b.setAttribute('_type', (block.type === 'or' || block.type === 'and') ? 'Boolean' : 'Integer');
+        in_b.setAttribute('_type', (block.type === 'or' || block.type === 'and') ? 'Boolean' : (block.type === 'make_array' ? '' : 'Integer'));
         in_b.setAttribute('onclick', 'pin_in(this)');
         in_b.id = 'in_' + Main.but_in_id++;
         left_col.insertBefore(in_b, add);
 
-        let inp = document.createElement('input');
-        inp.style.margin = '1.4px';
-        inp.id = 'input_' + Main.blk_input_id++;
-        inp.onclick = e => e.stopPropagation();
-        inp.onmousedown = e => e.stopPropagation();
-        inp.addEventListener('input', funct_input);
-        right_col.appendChild(inp);
-
+        if (block.type !== 'make_array'){
+            let inp = document.createElement('input');
+            inp.style.margin = '1.4px';
+            inp.id = 'input_' + Main.blk_input_id++;
+            inp.onclick = e => e.stopPropagation();
+            inp.onmousedown = e => e.stopPropagation();
+            inp.addEventListener('input', funct_input);
+            right_col.appendChild(inp);
+        }
         if (!Array.isArray(block.data)) block.data = [];
         block.data.push(null);
-        block.input.push({ id: in_b.id, type: (block.type === 'or' || block.type === 'and') ? 'Boolean' : 'Integer', connection: [] });
+        block.input.push({ id: in_b.id, type: (block.type === 'or' || block.type === 'and') ? 'Boolean' : (block.type === 'make_array' ? '' : 'Integer'), connection: [] });
     }
 
     // ---СОХРАНЕНИЕ/ЗАГРУЗКА---
@@ -1245,10 +1489,16 @@ else{
             });
 
             if (blockData.type === 'variable' && blockData.data){
-                const select = clone.querySelector('select');
-                if (select && blockData.data.select) select.value = blockData.data.select;
+                const selectType = clone.querySelector('select');
+                const selectStruct = clone.querySelectorAll('select')[1];
+                if (selectType && blockData.data.select) selectType.value = blockData.data.select;
+                if (selectStruct && blockData.data.structure) selectStruct.value = blockData.data.structure;
                 const nameInput = clone.querySelector('input[name="Var"]');
                 if (nameInput && blockData.data.varname) nameInput.value = blockData.data.varname;
+                if (nameInput) {
+                    let event = new Event('input', { bubbles: true });
+                    nameInput.dispatchEvent(event);
+                }
             }
 
             if (blockData.type === 'const' && blockData.data){
@@ -1278,8 +1528,29 @@ else{
                 if (!input.id || !input.id.startsWith('input_')) input.id = 'input_' + (Main.blk_input_id++);
             });
 
+            if (blockData.type === 'for_loop' && blockData.data) {
+                let inputs = clone.querySelectorAll('.column:nth-child(2) input');
+                if (inputs[0]) inputs[0].value = blockData.data.startIndex || '';
+                if (inputs[1]) inputs[1].value = blockData.data.endIndex || '';
+                if (inputs[2]) inputs[2].value = blockData.data.step || '1';
+            }
+
             Main.safe.appendChild(clone);
             setupBlockHandlers(clone);
+
+            if (blockData.type === 'make_array' && Array.isArray(blockData.data)) {
+                let currentInputs = clone.querySelectorAll('.column:nth-child(2) input').length;
+                let needed = blockData.data.length;
+                for (let i = currentInputs; i < needed; i++) {
+                    add_inputs(clone);
+                }
+                let inputs = clone.querySelectorAll('.column:nth-child(2) input');
+                inputs.forEach((input, idx) => {
+                if (idx < blockData.data.length) {
+                    input.value = blockData.data[idx];
+                }
+            });
+        }
 
             Main.blocks.push({
                 id: blockData.id,
@@ -1469,8 +1740,8 @@ else{
     }
 
     function addSaveLoadButtons(){
-        const card = document.querySelector('.card');
-        if (!card || document.querySelector('#save-btn')) return;
+    const card = document.querySelector('.card');
+    if (!card || document.querySelector('#save-btn')) return;
 
         const saveBtn = document.createElement('button');
         saveBtn.id = 'save-btn';
@@ -1493,9 +1764,35 @@ else{
         autosaveBtn.innerHTML = '↺ Автосохранение';
         autosaveBtn.onclick = loadAutosave;
 
+        const startBtn = document.createElement('button');
+        startBtn.id = 'start-btn';
+        startBtn.className = 'contact-button';
+        startBtn.style.background = '#28a745';
+        startBtn.innerHTML = '▶ Старт';
+        startBtn.onclick = function(){
+        const eventBlock = Main.blocks.find(b => b.type === 'event');
+        if (eventBlock){
+            START(eventBlock.id);
+        }
+        else{
+                show_ERR('Нет блока Event для запуска');
+            }
+        };
+
+        const clearOutputBtn = document.createElement('button');
+        clearOutputBtn.id = 'clear-output-btn';
+        clearOutputBtn.className = 'contact-button';
+        clearOutputBtn.style.background = '#dc3545';
+        clearOutputBtn.innerHTML = '🗑 Очистить вывод';
+        clearOutputBtn.onclick = function(){
+            clearOutputConsole();
+        };
+
         card.appendChild(saveBtn);
         card.appendChild(loadBtn);
         card.appendChild(autosaveBtn);
+        card.appendChild(startBtn);
+        card.appendChild(clearOutputBtn);
     }
 
     function update_datalist(){
@@ -1524,14 +1821,13 @@ else{
     window.delete_block = delete_block;
     window.START = START;
     window.update_datalist = update_datalist;
-    window.add_inputs = add_inputs; //на случай, если вызывается из кода
-    window.funct_input = funct_input; //используется в обработчиках
+    window.add_inputs = add_inputs;
+    window.funct_input = funct_input;
     window.printToConsole = printToConsole;
     window.clearOutputConsole = clearOutputConsole;
     window.show_ERR = show_ERR;
     window.clear_ERR = clear_ERR;
 
-    //Запуск инициализации после полной загрузки DOM
     if (document.readyState === 'loading'){
         document.addEventListener('DOMContentLoaded', init);
     }
