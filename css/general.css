@@ -1,3 +1,8 @@
+/* Сброс модели расчёта размеров для всех элементов */
+* {
+  box-sizing: border-box;
+}
+
 html {
   overflow: hidden;
   height: 100%;
@@ -14,43 +19,28 @@ body {
   position: relative;
 }
 
+/* Верхняя панель навигации */
 .card {
-  
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  justify-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
   background-color: #111111;
   max-width: 100%;
-  padding: 20px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  height: 120px;
 }
 
 .contact-button {
-  
   padding: 12px 25px;
   font-size: 1em;
   color: #ffffff;
   background-color: #111111;
   border: none;
   border-radius: 8px;
-  text-decoration-color:#c93434;
-  text-decoration: none;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.contact-buttonn {
-  background: linear-gradient(135deg, #fff 0%, #bfe2ff 50%, #8ec5fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-  padding: 12px 25px;
-  font-size: 1em;
-  color: #ffffff;
-  background-color: #111111;
-  border: none;
-  border-radius: 8px;
-  text-decoration-color:#c93434;
+  text-decoration-color: #c93434;
   text-decoration: none;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
@@ -69,21 +59,10 @@ body {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.contact-button:hover {
-  background-color: #252323;
-  transform: scale(1.1);
-}
-
+.contact-button:hover,
 .contact-buttonn:hover {
   background-color: #252323;
   transform: scale(1.1);
-}
-
-.button-group {
-  display: flex;
-  gap: 20px;
-  margin: 50px 0;
-  flex-direction: row-reverse;
 }
 
 .button-group {
@@ -101,10 +80,25 @@ body {
   border: 1px solid rgba(191, 226, 255, 0.3);
   box-shadow: 0 10px 25px rgba(51, 122, 183, 0.3);
   letter-spacing: 0.5px;
-  }
+}
 
 .button-group:hover {
   transform: translateY(-3px);
   box-shadow: 0 20px 35px rgba(51, 122, 183, 0.4);
   background: linear-gradient(145deg, #3b8acf, #225a8a);
+}
+
+@media (max-width: 750px) {
+  .card {
+    gap: 8px;
+    padding: 8px;
+    /* Высота остаётся фиксированной 120px, чтобы панель не съезжала */
+  }
+
+  .contact-button,
+  .contact-buttonn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    white-space: normal;  /* разрешаем перенос текста */
+  }
 }
