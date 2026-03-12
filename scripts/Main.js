@@ -499,7 +499,9 @@ else{
     }
 
     function reverse_go_to(blockId, visited = new Set()){
-        if (visited.has(blockId)){
+        if (visited.forEach(itm => {
+            if (itm === blockId) return true;
+        })){
             show_ERR(`Обнаружен цикл в графе данных для блока с id ${blockId}`, blockId);
             return null;
         }
