@@ -781,7 +781,6 @@ else{
         },
         for_loop: function(id, values){
             if (arguments.length === 1){
-                console.log("asdasd")
                 // Вызов по Exec
                 let block = Main.blocks.find(b => b.id == id);
                 let vals = reverse_go_to(id, new Set(), new Map());
