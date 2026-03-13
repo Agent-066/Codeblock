@@ -11,181 +11,648 @@
 <link rel="stylesheet" href="css/codeblock/blocks.css">
 </head>
 <body>
-  <div class="card">
-    <!-- Кнопки -->
-    <a href="codeblock.html" class="contact-buttonn">Главное</a>
-    <a href="about_me.html" class="contact-button">О нас</a>
-    <a href="gaide.pdf" class="contact-button">Как пользоваться ЭТИМ (Никак)</a>
-  </div>
-
+<div class="card">
+  <!-- Кнопки -->
+  <a href="codeblock.html" class="contact-buttonn">Главное</a>
+  <a href="about_me.html" class="contact-button">О нас</a>
+  <a href="gaide.pdf" class="contact-button">Как пользоваться ЭТИМ (Никак)</a>
+</div>
 
   <input type="checkbox" id="side-checkbox" />
 
   <div class="side-panel">
     <label class="side-button-2" for="side-checkbox">+</label>
-    <div class="variable" onclick="to_sz(this)">
-      variable
-      <button class="delete-button_x">x</button>
-      <!--вводим название переменной -->
-      <input>
-      <button class="out"></button>
+    <div class="block" block_type="event">
+      <div class="top_block">
+        <p>Event</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          Start
+        </div>
+        <div class="column">
+          <button class="out" _type="Exec">▷</button>
+        </div>
+      </div>
     </div>
 
-    <div class="assignment_operation" onclick="to_sz(this)">
-      assignment_operation
-      <button class="delete-button_x">x</button>
-      <!--1-ый вход (переменная)-->
-      <button class="in"></button>
-      <!--2-ой вход -- то чему будет равняться (переменные/числа/прочее)-->
-      <input>
-      <button class="in"></button>
-      <!--выход-->
-      <button class="out"></button>
+    <div class="block" block_type="variable">
+      <div class="top_block">
+        <p>Variable</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column"></div>
+        <div class="column">
+          <select>
+            <option>Integer</option>
+            <option>Float</option>
+            <option>String</option>
+            <option selected>Boolean</option>
+          </select>
+          <select>
+            <option>
+              ■ Single
+            </option>
+            <option>
+              ■ ■ ■ Array
+            </option>
+            <option>
+              {} Struct
+            </option>
+          </select>
+          <input name="Var" placeholder="input name">
+        </div>
+        <div class="column"></div>
+      </div>
     </div>
 
-    <div class="sum" onclick="to_sz(this)">
-      sum
-      <button class="delete-button_x">x</button>
-      <!--1-ый вход (переменные/числа)-->
-      <input>
-      <button class="in"></button>
-      <!--2-ой вход (переменные/числа)-->
-      <input>
-      <button class="in"></button>
-      <!--n-ый выход (проработать скрипт)-->
-      <!--вход-->
-      <button class="out"></button>
+    <div class="block" block_type="set">
+      <div class="top_block">
+        <p>Set</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Exec">▷</button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input placeholder="variable name" list="global_datalist">
+        </div>
+        <div class="column">
+          <button class="out" _type="Exec">▷</button>
+        </div>
+      </div>
     </div>
 
-    <div class="cout" onclick="to_sz(this)">
-      cout
-      <button class="delete-button_x">x</button>
-      <!--1-ый вход-->
-      <input>
-      <button class="in"></button>
-      <!--2-ой вход-->
-      <input>
-      <button class="in"></button>
-      <!--n-ый вход (проработать скрипт)-->
+    <div class="block" block_type="get" >
+      <div class="top_block">
+        <p>Get</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          <input list="global_datalist" placeholder="variable name">
+        </div>
+        <div class="column">
+          <button class="out" _type=""></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="multiplication" >
+      <div class="top_block">
+        <p>Multiplication</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Integer"></button>
+          <button class="in" _type="Integer"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Integer"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="sum" >
+      <div class="top_block">
+        <p>Sum</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Integer"></button>
+          <button class="in" _type="Integer"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Integer"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="branch" >
+      <div class="top_block">
+        <p>Branch (if)</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Exec">▷</button>
+          <button class="in" _type="Boolean"></button>
+        </div>
+        <div class="column"></div>
+        <div class="column">
+          <button class="out" _type="Exec">▷</button>
+          True
+          <button class="out" _type="Exec">▷</button>
+          False
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="cout">
+      <div class="top_block">
+        <p>Cout</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Exec">▷</button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column"></div>
+        <div class="column"></div>
+      </div>
+    </div>
+
+    <div class="block" block_type="const">
+      <div class="top_block">
+        <p>Const</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+        </div>
+        <div class="column">
+          <select class="const-type-select">
+            <option value="Integer" selected>Integer</option>
+            <option value="Float">Float</option>
+            <option value="String">String</option>
+            <option value="Boolean">Boolean</option>
+          </select>
+          <div class="const-input-container">
+            <input type="text" style="width: 60px;" placeholder="value">
+          </div>
+        </div>
+        <div class="column">
+          <button class="out" _type="Integer"></button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="block" block_type="subtraction" >
+      <div class="top_block">
+        <p>Subtraction</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Integer"></button>
+          <button class="in" _type="Integer"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Integer"></button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="block" block_type="division" >
+      <div class="top_block">
+        <p>Division</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Integer"></button>
+          <button class="in" _type="Integer"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Integer"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class='block' block_type="modulo">
+        <div class="top_block">
+          <p>Modulo</p>
+          <button class="delete-button_x">x</button>
+        </div>
+        <div class="three_columns">
+          <div class="column">
+            <button class="in" _type="Integer"></button>
+            <button class="in" _type="Integer"></button>
+          </div>
+          <div class="column">
+            <input style="margin: 1.4px;" placeholder="value">
+            <input style="margin: 1.4px;" placeholder="value">
+          </div>
+          <div class="column">
+            <button class="out" _type="Integer"></button>
+          </div>
+        </div>
+    </div>
+
+    <div class="block" block_type="operation_more">
+      <div class="top_block">
+        <p>Operation ></p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="operation_less">
+      <div class="top_block">
+        <p>Operation <</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="operation_more_equal">
+      <div class="top_block">
+        <p>Operation >=</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="operation_less_equal">
+      <div class="top_block">
+        <p>Operation <=</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="operation_equal">
+      <div class="top_block">
+        <p>Operation ==</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+
+    </div>
+    
+    <div class="block" block_type="operation_not_equal">
+      <div class="top_block">
+        <p>Operation !=</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type=""></button>
+          <button class="in" _type=""></button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="or" >
+      <div class="top_block">
+        <p>Or</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Boolean"></button>
+          <button class="in" _type="Boolean"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="and" >
+      <div class="top_block">
+        <p>And</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Boolean"></button>
+          <button class="in" _type="Boolean"></button>
+          <button class="add">+</button>
+        </div>
+        <div class="column">
+          <input style="margin: 1.4px;" placeholder="value">
+          <input style="margin: 1.4px;" placeholder="value">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="block" block_type="invert" >
+      <div class="top_block">
+        <p>Invert</p>
+        <button class="delete-button_x">x</button>
+      </div>
+      <div class="three_columns">
+        <div class="column">
+          <button class="in" _type="Boolean"></button>
+        </div>
+        <div class="column">
+        </div>
+        <div class="column">
+          <button class="out" _type="Boolean"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" block_type="for_loop">
+  <div class="top_block">
+    <p>For Loop</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Exec">▷</button>
+      <button class="in" _type="Integer"></button> <!-- start -->
+      <button class="in" _type="Integer"></button> <!-- end -->
+      <button class="in" _type="Integer"></button> <!-- step -->
+    </div>
+    <div class="column">
+      <input placeholder="start">
+      <input placeholder="end">
+      <input placeholder="step" value="1">
+    </div>
+    <div class="column">
+      <button class="out" _type="Integer"></button> <!-- index -->
+      <button class="out" _type="Exec">▷</button> <!-- loop body -->
+      <button class="out" _type="Exec">▷</button> <!-- completed -->
     </div>
   </div>
+</div>
 
+<!-- While Loop -->
+<div class="block" block_type="while_loop">
+  <div class="top_block">
+    <p>While Loop</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Exec">▷</button>
+      <button class="in" _type="Boolean"></button> <!-- condition -->
+    </div>
+    <div class="column">
+      <input placeholder="condition?">
+    </div>
+    <div class="column">
+      <button class="out" _type="Exec">▷</button> <!-- loop body -->
+      <button class="out" _type="Exec">▷</button> <!-- completed -->
+    </div>
+  </div>
+</div>
+
+<!-- Get Element -->
+<div class="block" block_type="get_element">
+  <div class="top_block">
+    <p>Get Element</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type="Integer"></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="index">
+    </div>
+    <div class="column">
+      <button class="out" _type=""></button> <!-- элемент -->
+    </div>
+  </div>
+</div>
+
+<!-- Set Element -->
+<div class="block" block_type="set_element">
+  <div class="top_block">
+    <p>Set Element</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type="Integer"></button>
+      <button class="in" _type=""></button> <!-- значение -->
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="index">
+      <input placeholder="value">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button> <!-- изменённый массив -->
+    </div>
+  </div>
+</div>
+
+<!-- Array Length -->
+<div class="block" block_type="array_length">
+  <div class="top_block">
+    <p>Array Length</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+    </div>
+    <div class="column">
+      <button class="out" _type="Integer"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Make Array -->
+<div class="block" block_type="make_array">
+  <div class="top_block">
+    <p>Make Array</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type=""></button>
+      <button class="add">+</button>
+    </div>
+    <div class="column">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Append -->
+<div class="block" block_type="append">
+  <div class="top_block">
+    <p>Append</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type=""></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="element">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Index -->
+<div class="block" block_type="remove_index">
+  <div class="top_block">
+    <p>Remove Index</p>
+    <button class="delete-button_x">x</button>
+  </div>
+  <div class="three_columns">
+    <div class="column">
+      <button class="in" _type="Array"></button>
+      <button class="in" _type="Integer"></button>
+    </div>
+    <div class="column">
+      <input placeholder="array">
+      <input placeholder="index">
+    </div>
+    <div class="column">
+      <button class="out" _type="Array"></button>
+    </div>
+  </div>
+</div>
+  </div>
+
+  </div>
 
   <div class="safe-zone">
-    <svg style="position: absolute; height:  100%; width: 100%;">
-    </svg>
+    <svg style="position: absolute; height: 5000px; width: 5000px;"></svg>
+    <div class="border"></div>
+    <div class="safe-zone-rt"></div>
+    <div class="safe-zone-down"></div>
   </div>
-  <!--Размещение блоков-->
-  <script>
-      var safe_zone = document.querySelector(".safe-zone");
-      var id_list = [];
-      let cur_i = 0;
-      var id_cur = [cur_i];
 
-      function to_sz(t){
-        let c_t = t.cloneNode(true);
-        c_t.removeAttribute("onclick");
-        c_t.classList.add("movable");
-        safe_zone.append(c_t);
-
-        let out_t = c_t.querySelector(".out")
-        if (out_t) out_t.setAttribute("onclick", "pin_out(this)");
-        
-
-        let in_t = c_t.querySelector(".in")
-        if (in_t) in_t.setAttribute("onclick", "pin_in(this)");
-        
-        let b_t = c_t.querySelector(".delete-button_x")
-        b_t.className = "delete-button";
-        b_t.setAttribute("onclick", "delete_block(this)");
-
-        c_t.id = id_cur[0];
-
-        if (cur_i == id_cur[0]) {
-          id_list.push(id_cur[0]);
-          id_cur.pop();
-          cur_i += 1;
-          id_cur.push(cur_i);
-        }
-        else{
-          id_list.push(id_cur[0]);
-          id_cur.shift();
-        }
-      }
-  </script>
-  <!--Удаление блоков + закрепление ID и + -->
-  <script>
-      function delete_data_out(flag_data, flag_data_x){
-        let wasd = "[id='" + flag_data + "']";
-        let el = document.querySelector(wasd).querySelector(".out");
-        let list_data = el.getAttribute("data").split(" ");
-        index = list_data.indexOf(flag_data_x);
-        list_data.splice(index, 1);
-        el.setAttribute("data", list_data.join(" "));
-      }
-
-      function delete_block(t){
-        let block = t.parentElement;
-        i = Number(block.id);
-        index = id_list.indexOf(i);
-        id_list.splice(index, 1)
-        id_cur.unshift(i);
-        block.remove();
-      }
-
-      var flag_1 = false;
-      var flag_2 = false;
-      
-      var t_1 = null;
-      var t_2 = null;
-
-      function pin_out(t){
-        flag_1 = true;
-        t_1 = t;
-      }
-
-      function pin_in(t){
-        flag_2 = true;
-        t_2 = t;
-        flag_data_x = t_2.closest('.movable').id;
-        flag_data = t_2.getAttribute("data");
-        if (flag_data && !flag_1) {
-          delete_data_out(flag_data, flag_data_x);
-
-          t_2.setAttribute("data", "");
-        }
-        if (flag_1){
-          if (t_1.closest(".movable").id == t_2.closest(".movable").id) return;
-
-          if (flag_data) delete_data_out(flag_data, flag_data_x);
-
-          document.addEventListener("mouseup", function(e){
-            let el = e.target.closest(".in");
-            if (!el){
-              flag_1 = false;
-              flag_2 = false;
-              return
-            }
-          });
-
-          let list_data = (t_1.getAttribute("data") || "").split(" ");
-          list_data.push(t_2.closest(".movable").id);
-
-          t_1.setAttribute("data", list_data.join(" "));
-          t_2.setAttribute("data", t_1.closest(".movable").id);
-
-          flag_1 = false;
-        }
-      }
-  </script>
-  <!--Передвижение (очевидно)-->
-  <script src="scripts/movable.js"></script>
-
-
+  <div class="grid-toggle-wr">
+    <button id="grid-toggle-btn" class="grid-toggle-btn">⊞</button>
+  </div>
   <div class="side-button-1-wr">
     <label class="side-button-1" for="side-checkbox">
       <div class="side-b side-open">Ξ</div>
     </label>
-  </div>  
+  </div>
+
+  <div id="error-console">
+    <div style="font-weight: bold; margin-bottom: 8px;">Ошибки</div>
+    <div id="error-messages" style="max-height: 150px; overflow-y: auto;"></div>
+  </div>
+  <div id="output-console">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+    <span style="font-weight: bold;">Вывод</span>
+    <button id="clear-output" style="background: none; border: none; color: #0f0; cursor: pointer; font-size: 14px;">X</button>
+    </div>
+    <div id="output-messages"></div>
+  </div>
+  <datalist id="global_datalist">
+  </datalist>
+
+  <script src="scripts/Main.js"></script>
 </body>
 </html>

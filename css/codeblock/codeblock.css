@@ -1,37 +1,54 @@
-
-.movable /*всё что имеет этот класс будет двигаться*/
-{
-  position: absolute;
-  cursor: move;
-  user-select: none; 
+/* Дополнительный стиль для отключения сетки */
+.safe-zone.no-grid {
+    background-image: none !important;
 }
 
-/* боковая панель */
+.block.movable /* всё что имеет этот класс будет двигаться */
+{
+    position: absolute;
+}
+
+a {
+    text-align: center;
+}
+
+/* Боковая панель */
 #side-checkbox {
     display: none;
 }
+
 .side-panel {
+    align-items: center;
     position: fixed;
-    z-index: 999999;
-    left: -100%;
+    top: 120px;                  /* под card */
+    left: -25vw;                  /* скрыта за левым краем */
+    width: 25vw;                  /* всегда 25% ширины окна */
+    height: calc(100vh - 120px);
     background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
-    transition: all 0.5s;   
-    width: 25%;
-    height: 100%;
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 10px 0 20px rgba(0,0,0,0.4);
     color: #FFF;
     padding: 40px 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    z-index: 999999;
 }
 
-/* Оформление кнопки на странице */
+
+/* Кнопка открытия панели (гамбургер) */
 .side-button-1-wr {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%); 
+    position: fixed;
+    top: 60%;
+    left: 20px;
+    transform: translateY(-50%);
+
 }
+
 .side-button-1 {
     display: inline-block;
 }
+
 .side-button-1 .side-b {
     margin: 10px;
     text-decoration: none;
@@ -41,9 +58,10 @@
     padding: 12px 20px;
     color: #FFF;
     font-weight: bold;
-    text-transform: uppercase; 
-    font-family: 'Roboto', Тahoma, sans-serif;
-    background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);    cursor: pointer; 
+    text-transform: uppercase;
+    font-family: 'Roboto', Tahoma, sans-serif;
+    background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
+    cursor: pointer;
     border: 3px solid rgba(255, 255, 255, 0.2);
     border-radius: 45%;
 }
@@ -58,38 +76,223 @@
     transition: all 280ms ease-in-out;
     width: 0;
 }
-/* Переключатели кнопки 1 */
+
+/* Переключатели кнопки (открыто/закрыто) */
 .side-button-1 .side-close {
     display: none;
 }
+
 #side-checkbox:checked + .side-panel + .side-button-1-wr .side-button-1 .side-open {
     display: none;
 }
+
 #side-checkbox:checked + .side-panel + .side-button-1-wr .side-button-1 .side-close {
     display: block;
 }
+
 #side-checkbox:checked + .side-panel {
     left: 0;
 }
-/* Оформление кнопки на панели */
+
+/* Кнопка закрытия на панели (крестик) */
 .side-button-2 {
     font-size: 30px;
     border-radius: 20px;
-    position: absolute;
+    position: sticky;
+    float: right;
     z-index: 1;
     top: 8px;
     right: 8px;
     cursor: pointer;
     transform: rotate(45deg);
-    color: #BFE2FF;    
-    transition: all 280ms ease-in-out;    
+    color: #BFE2FF;
+    transition: all 280ms ease-in-out;
 }
+
 .side-button-2:hover {
-    transform: rotate(45deg) scale(1.1);    
+    transform: rotate(45deg) scale(1.1);
     color: #FFF;
 }
 
-.safe-zone{
-  height: 90%;
-  width: 100%;
+.border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5000px;
+    height: 5000px;
+    border: 10px solid #ff000068;
+    border-style: dashed;
+    box-sizing: border-box;
+}
+
+.safe-zone {
+    transition: margin-left 0.5s ease;
+    height: 94%;
+    max-width: none;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    position: relative;
+    background-color: #262830;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px);
+    background-size: 50px 50px;
+    background-attachment: scroll;
+    background-position: 0 0;
+    background-repeat: repeat;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #27456a;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6a2727;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Декоративные зоны */
+.safe-zone-rt {
+    position: absolute;
+    left: 4000px;
+    top: 500px;
+}
+
+.safe-zone-rt::before {
+    content: " ";
+    font-size: 40px;
+    margin-right: 10px;
+}
+
+.safe-zone-down {
+    position: absolute;
+    left: 500px;
+    top: 4000px;
+}
+
+.safe-zone-down::before {
+    content: " ";
+    font-size: 40px;
+    margin-right: 10px;
+}
+
+/* Отключаем сдвиг рабочей области при открытой панели */
+#side-checkbox:checked ~ .safe-zone {
+    margin-left: 0;
+}
+
+/* Кнопка переключения сетки */
+.grid-toggle-wr {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000000;
+}
+
+.grid-toggle-btn {
+    font-size: 20px;
+    padding: 8px 14px;
+    margin: 10px;
+    line-height: 24px;
+    color: #FFF;
+    font-weight: bold;
+    background: linear-gradient(145deg, #2a4870 0%, #1c3a5c 100%);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 45%;
+    transition: all 280ms ease-in-out;
+}
+
+.grid-toggle-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(145deg, #1c3a5c 0%, #2a4870 100%);
+}
+
+/* Консоль ошибок */
+#error-console {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: 
+        linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+        linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+        linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+        radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+        rgba(20, 20, 30, 0.8);
+    color: #ff6b6b;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 350px;
+    max-height: 200px;
+    z-index: 10000;
+    font-family: monospace;
+    border-left: 4px solid #ff3b3b;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: none;
+}
+
+.block-error {
+    border: 3px solid #ff3b3b !important;
+    box-shadow: 0 0 20px rgba(255, 59, 59, 0.7) !important;
+}
+
+/* Консоль вывода */
+#output-console {
+    position: fixed;
+    bottom: 20px;
+    right: 150px;
+    background:
+        linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+        linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+        linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+        radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+        rgba(20, 20, 30, 0.8);
+    color: #0f0;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 350px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10000;
+    font-family: monospace;
+    border-left: 4px solid #0f0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: none;
+}
+
+@media (min-width: 441px){
+    .side-panel {
+        width: 53vw;
+        left: -55vw;
+        padding: 20px 1px;
+    }
+}
+
+@media (min-width: 600px){
+    .side-panel {
+        width: 45vw;
+        left: -47vw;
+        padding: 20px 15px;
+    }
+}
+
+@media (min-width: 830px){
+    .side-panel {
+        width: 33vw;
+        left: -35vw;
+        padding: 20px 15px;
+    }
+}
+
+@media (min-width: 1340px){
+    .side-panel {
+        width: 20vw;
+        left: -22vw;
+        padding: 20px 15px;
+    }
 }

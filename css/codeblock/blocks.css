@@ -1,85 +1,279 @@
 /*Прочее*/
 
+.top_block {
+  justify-content: space-between;
+  align-items: center; 
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.three_columns {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;  /* Три равные колонки */
+  gap: 20px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+p {
+  text-indent: 9px;
+  margin: 0;
+  font-size: 20px;
+  background: radial-gradient(
+    circle at center, 
+    rgba(0, 0, 0, 0.35) 50%,   
+    rgba(57, 57, 57, 0) 100%     
+  );
+}
+
+select, input {
+  text-align: center;
+  width: auto;
+  max-width: 90px;
+  color: white;
+  background: radial-gradient(
+    circle at center, 
+    rgba(0, 0, 0, 0.449) 0%,   
+    rgba(57, 57, 57, 0) 70%     
+  );
+  background-color: transparent ;
+  border: 2px solid #3e3f43;
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-radius: 5px;
+  padding: 0 1em 0 0;
+  margin: 0;
+}
+
+input {
+  max-width: 75px;
+}
+
+option {
+  background-color: #2d2d2d;
+}
+
+.block{
+  position: relative;
+  background: 
+              linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+              linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+              linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+              linear-gradient(to right bottom, rgba(255, 255, 255, 0.615), rgba(0, 87, 0, 0), 60px, transparent), 
+              radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 0%, rgba(57, 57, 57, 0) 100%),
+              rgba(27, 27, 27, 0.9);
+  padding-top: 25px;
+  border: 2px solid #3e3f43;
+  border-top: 2px solid #737376;
+  border-left: 2px solid #737376;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  margin: 10px;
+  padding: 10px 15px 15px 15px;
+  width: 200px;
+  min-height: 80px;
+  gap: 8px;
+}
+
+.block:hover {
+  border-color: #ffd800;
+  box-shadow: 0 10px 25px #56543b;
+}
+
 .delete-button_x {
-    background: rgb(47, 47, 47);
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    margin: 2px;
-    cursor: pointer;
-    font: inherit;
+  background: rgb(47, 47, 47);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
+  box-shadow: 0 2px 4px rgb(29, 24, 24), inset 0 1px 2px rgb(146, 146, 146)
 }
 
 .delete-button {
-    background: rgb(47, 47, 47);
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    margin: 2px;
-    cursor: pointer;
-    font: inherit;
+  color: #ffffff;
+  background: rgb(47, 47, 47);
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
+  box-shadow: 0 2px 4px rgb(29, 24, 24), inset 0 1px 2px rgb(146, 146, 146)
 }
 
 .delete-button:hover {
-    background: rgb(255, 107, 107)
+    background: rgb(255, 107, 107);
+    box-shadow: inset 0 2px 10px rgb(0, 0, 0)
 }
 
-.out {
-    background: rgb(190, 97, 97);
-    border: none;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    font: inherit;
-}
-
-.out:hover {
-    background: rgb(51, 51, 51)
+.in, .out {
+  background-color: #0000009d;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin: 2px 4px 2px 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .in {
-    background: rgb(4, 13, 80);
-    border: none;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    cursor: pointer;
-    font: inherit;
+  border: 3.1px solid #7a769a;
 }
 
 .in:hover {
-    background: rgb(51, 51, 51)
+  
+  border: 3.1px solid #7a769a;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(44, 37, 77)
 }
 
+.out {
+  border: 3.1px solid #946969;
+}
+
+.out:hover {
+  border: 3.1px solid #946969;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(88, 42, 42)
+}
+
+.add {
+  color: #ffffff;
+  background: rgb(47, 47, 47);
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
+  box-shadow: 0 2px 4px rgb(29, 24, 24), inset 0 1px 2px rgb(146, 146, 146)
+}
+
+.add:hover {
+  color: #ffffff;
+  background: rgb(54, 96, 57);
+  border: none;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(29, 24, 24), inset 0 1px 2px rgb(146, 146, 146)
+}
+
+button[_type="Exec"] {
+  font-size: 25px;
+  border: none;
+  background-color: #00000000;
+  box-shadow: none;
+  color: white;
+}
+
+button[_type="Exec"]:hover {
+  background: #00000000;
+  box-shadow: none;
+  border: #00000000;
+}
+
+button[_type="Integer"] {
+  border: 3.1px solid blue;
+}
+button[_type="Integer"]:hover {
+  border: 3.1px solid blue;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(44, 37, 77)
+}
+button[_type="String"] {
+  border: 3.1px solid violet;
+}
+button[_type="String"]:hover {
+  border: 3.1px solid violet;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(98, 45, 97)
+}
+button[_type="Boolean"] {
+  border: 3.1px solid red;
+}
+button[_type="Boolean"]:hover {
+  border: 3.1px solid red;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(88, 42, 42)
+}
+button[_type="Float"] {
+  border: 3.1px solid green;
+}
+button[_type="Float"]:hover {
+  border: 3.1px solid green;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(42, 88, 42)
+}
+button[_type="Array"] {
+  border: 3.1px solid orange;
+}
+button[_type="Array"]:hover {
+  border: 3.1px solid orange;
+  transform: scale(1.2);
+  box-shadow: 0 2px 4px rgb(88, 88, 42);
+}
 /*Блоки*/
 
-#start{
-    background-color: brown;
-    margin: 5px;
+[block_type='sum'], [block_type='multiplication'], 
+[block_type='subtraction'], [block_type='division'], [block_type='modulo'], 
+[block_type='operation_more'], [block_type='operation_less'], [block_type='operation_equal'], 
+[block_type='operation_not_equal'], [block_type='operation_less_equal'], [block_type='operation_more_equal'],
+[block_type='const'], [block_type='or'], [block_type='and'], [block_type='invert']{
+  background: 
+              linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+              linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+              linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+              linear-gradient(to right bottom, rgba(255, 255, 255, 0.615), rgba(0, 87, 0, 0), 80px, transparent), 
+              linear-gradient(to bottom, rgba(43, 142, 43, 0.992), rgba(19, 134, 19, 0.992), rgba(37, 153, 37, 0.992), 45px, transparent 2px, transparent, transparent),
+              radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+              rgba(27, 27, 27, 0.9);
 }
 
-#end{
-    background-color: brown;
-    margin: 5px;
+[block_type='event'], [block_type='get']{
+  background: 
+              linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+              linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+              linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+              linear-gradient(to right bottom, rgba(255, 255, 255, 0.615), rgba(0, 87, 0, 0), 80px, transparent), 
+              linear-gradient(to bottom, rgba(255, 125, 125, 0.45), rgba(255, 0, 0, 0.596) 45px, transparent 5px, transparent),
+              radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+              rgba(27, 27, 27, 0.9);
 }
 
-.variable{
-    background-color: brown;
-    margin: 5px;
+[block_type='cout'] {
+  background: 
+              linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+              linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+              linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+              linear-gradient(to right bottom, rgba(255, 255, 255, 0.615), rgba(0, 87, 0, 0), 80px, transparent), 
+              linear-gradient(to bottom, rgba(125, 125, 255, 0.45), rgba(0, 0, 191, 0.45) 45px, transparent 5px, transparent),
+              radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+              rgba(27, 27, 27, 0.9);
 }
 
-.assignment_operation{
-    background-color: brown;
-    margin: 5px;
-}
-
-.sum{
-    background-color: brown;
-    margin: 5px;
-}
-
-.cout{
-    background-color: brown;
-    margin: 5px;
+[block_type='get_element'], 
+[block_type='set_element'],
+[block_type='make_array'], 
+[block_type='append'],
+[block_type='array_length'],
+[block_type='remove_index'] {
+  background: 
+              linear-gradient(135deg, transparent 28%, rgba(80, 80, 80, 0.167) 30%, rgba(80, 80, 80, 0.167) 36%, transparent 38%),
+              linear-gradient(135deg, transparent 78%, rgba(100, 100, 100, 0.35) 80%, rgba(100, 100, 100, 0.35) 90%, transparent 92%),
+              linear-gradient(20deg, transparent 60%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.5) 100%, transparent 100%),
+              linear-gradient(to right bottom, rgba(255, 255, 255, 0.615), rgba(0, 87, 0, 0), 80px, transparent), 
+              linear-gradient(to bottom, rgba(255, 166, 0, 0.45), rgba(255, 166, 0, 0.852) 45px, transparent 5px, transparent),
+              radial-gradient(circle at center, rgba(0, 0, 0, 0.207) 20%, rgba(57, 57, 57, 0) 70%),
+              rgba(27, 27, 27, 0.9);
 }
