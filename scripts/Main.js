@@ -2,6 +2,8 @@
     const Main = {
         // ПЕРЕМЕННЫЕ
         //Данные блоков и переменных
+        input_cache: new Map(),
+        output_cache: new Map(),
         variables: [],
         blocks: [],
         id_list: [],
@@ -245,8 +247,6 @@ else{
             structure = structure[structure.length - 1]
             let actualType = structure === "Array" ? "Array" : select_type;
             let elementType = structure === "Array" ? select_type : null;
-
-            console.log(structure)
 
             const regex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
             let valid_names = [];
@@ -505,9 +505,9 @@ else{
         functions[block.type]?.(id_to);
     }
 
-    function reverse_go_to(blockId, path = new Set(), cache = new Map()){
-        if (cache.has(blockId)){
-            return cache.get(blockId);
+    function reverse_go_to(blockId, path = new Set()){
+        if (Main.input_cache.has(blockId)) {
+            return Main.input_cache.get(blockId);
         }
 
         if (path.has(blockId)){
@@ -515,8 +515,6 @@ else{
             return undefined;
         }
         path.add(blockId);
-
-        console.log(path)
 
         const block = Main.blocks.find(b => b.id == blockId);
         if (!block){
@@ -531,31 +529,38 @@ else{
                 inp_values.push(undefined);
                 continue;
             }
+            
             const conn = inp.connection[0];
             const s_blk_id = conn.from_block;
             const s_out_id = conn.from;
+            
+            if (Main.output_cache.has(s_blk_id)) {
+                inp_values.push(Main.output_cache.get(s_blk_id));
+                continue;
+            }
 
-            let s_value = reverse_go_to(s_blk_id, path, cache);
-
+            let s_value = reverse_go_to(s_blk_id, path);
             if (s_value === undefined) {
                 console.error('Не удалось вычислить значение для блока с id', s_blk_id);
                 inp_values.push(undefined);
-            } else {
+            }
+            else{
                 const s_blk = Main.blocks.find(b => b.id == s_blk_id);
                 const out = s_blk.output.find(o => o.id == s_out_id);
                 if (out && functions[s_blk.type]){
-                    const val = functions[s_blk.type](s_blk_id, s_value);
+                    let val = null;
+                    val = functions[s_blk.type](s_blk_id, s_value)
+                    Main.output_cache.set(s_blk_id, val)
                     inp_values.push(val);
-                    }
+                }
                 else{
                     inp_values.push(undefined);
                 }
             }
         }
 
+    Main.input_cache.set(blockId, inp_values);
     path.delete(blockId);
-
-    cache.set(blockId, inp_values);
     return inp_values;
 }
 
@@ -578,7 +583,7 @@ else{
                 show_ERR(`Переменная "${varName}" не найдена`, _block.id);
                 return;
             }
-            let inp_values = reverse_go_to(id, new Set(), new Map());
+            let inp_values = reverse_go_to(id, new Set());
             let val_val = inp_values[0];
             if (val_val === undefined){
                 show_ERR('Не подано значение на вход блока Set', _block.id);
@@ -598,7 +603,7 @@ else{
         cout: (id) => {
             let block_info = Main.blocks.find(itm => itm.id == id);
             if (!block_info) return;
-            let value = reverse_go_to(id, new Set(), new Map())[0];
+            let value = reverse_go_to(id, new Set())[0];
             printToConsole(value);
         },
         get: (id) => {
@@ -769,7 +774,7 @@ else{
         branch: (id) => {
             let block = Main.blocks.find(b => b.id == id);
             if (!block) return;
-            let inputs = reverse_go_to(id, new Set(), new Map());
+            let inputs = reverse_go_to(id, new Set());
             let RC = (inputs && inputs.length > 0) ? inputs[0] : false;
             let C = Boolean(RC);
             let out = C ? block.output[0] : block.output[1];
@@ -782,7 +787,7 @@ else{
             if (arguments.length === 1){
                 // Вызов по Exec
                 let block = Main.blocks.find(b => b.id == id);
-                let vals = reverse_go_to(id, new Set(), new Map());
+                let vals = reverse_go_to(id, new Set());
                 let start = vals[0] !== undefined ? parseInt(vals[0]) : (block.data.startIndex !== null ? parseInt(block.data.startIndex) : 0);
                 let end = vals[1] !== undefined ? parseInt(vals[1]) : (block.data.endIndex !== null ? parseInt(block.data.endIndex) : 0);
                 let step = vals[2] !== undefined ? parseInt(vals[2]) : (block.data.step !== null ? parseInt(block.data.step) : 1);
@@ -799,7 +804,6 @@ else{
                 for (let i = start; (step > 0 ? i <= end : i >= end); i += step){
                     if (cur_it >= iter_limit) {show_ERR(`Превышен лимит итераций (${iter_limit}) в цикле for. Возможно, условие никогда не станет ложным.`, id); break;}
                     cur_it += 1;
-                    console.log(cur_it)
                     block.data.currentIndex = i;
                     if (outLoopBody.connection.length > 0){
                         go_to(outLoopBody.connection[0].to_block, id);
@@ -821,7 +825,7 @@ else{
                 let block = Main.blocks.find(b => b.id == id);
                 let outLoopBody = block.output[0]; // loop body
                 let outCompleted = block.output[1]; // completed
-                let condVals = reverse_go_to(id, new Set(), new Map());
+                let condVals = reverse_go_to(id, new Set());
                 let condition = toBoolean(condVals[0]);
 
                 const iter_limit = 10000;
@@ -832,7 +836,7 @@ else{
                     if (cur_it >= iter_limit) {show_ERR(`Превышен лимит итераций (${iter_limit}) в цикле while. Возможно, условие никогда не станет ложным.`, id); break;}
                     cur_it += 1;
 
-                    condVals = reverse_go_to(id, new Set(), new Map());
+                    condVals = reverse_go_to(id, new Set());
                     condition = toBoolean(condVals[0]);
                 }
                 if (outCompleted.connection.length > 0) go_to(outCompleted.connection[0].to_block, id);
@@ -1189,7 +1193,6 @@ else{
             let msg_el = document.getElementById('output-messages');
             if (!cons_el || !msg_el) return;
 
-            console.log(value);
             cons_el.style.display = 'block';
             let line = document.createElement('div');
             line.textContent = String(value);
@@ -1231,7 +1234,6 @@ else{
             select.onclick = e => e.stopPropagation();
             select.onmousedown = e => e.stopPropagation();
             select.addEventListener("change", function(){
-                console.log(index)
                 if (index === 0){
             let type = this.value;
             let block = this.closest(".movable");
@@ -1255,7 +1257,6 @@ else{
                  }
                 else if (index === 1) {
                     let struct = this.value;
-                    console.log(struct)
                     let block = this.closest(".movable");
                     let block_info = Main.blocks.find(itm => itm.id == block.id);
                     block_info.data.structure = struct;
