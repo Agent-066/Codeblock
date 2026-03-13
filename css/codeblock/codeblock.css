@@ -18,6 +18,7 @@ a {
 }
 
 .side-panel {
+    align-items: center;
     position: fixed;
     top: 120px;                  /* под card */
     left: -25vw;                  /* скрыта за левым краем */
@@ -264,33 +265,98 @@ a {
     display: none;
 }
 
-/* Адаптация для очень маленьких экранов (дополнительные корректировки) */
-@media (max-width: 450px) {
+/* Базовые стили для блоков в панели (одинаковые для всех размеров) */
+.side-panel .block {
+    width: 190px !important;
+    min-height: 65px;
+    font-size: 12px;
+    margin: 5px auto;
+}
+
+.side-panel .column {
+    min-width: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.side-panel .three_columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 70px;
+    justify-items: center;
+    padding: 0 5px;
+}
+
+.side-panel select,
+.side-panel input {
+    max-width: 100px;
+    font-size: 11px;
+    margin: 2px auto;
+}
+
+.side-panel .top_block {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.side-panel .delete-button,
+.side-panel .delete-button_x,
+.side-panel .add {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+}
+
+@media (min-width: 441px){
+    .side-panel {
+        width: 53vw;
+        left: -55vw;
+        padding: 20px 1px;
+    }
+        
+        
     .side-panel .block {
-        width: 95%;
-        max-width: 260px;
+        width: 190px !important;
+        min-height: 65px;
+        font-size: 12px;
     }
-
-    #error-console,
-    #output-console {
-        width: 90%;
-        max-width: 350px;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 10px;
-        font-size: 11px;
+    
+    .side-panel .column {
+        min-width: 1px;
     }
-
-    #output-console {
-        bottom: 170px;
-    }
-
-    .grid-toggle-wr {
-        bottom: 15px;
-        right: 15px;
+    
+    .side-panel select,
+    .side-panel input {
+        max-width: 75px;
+        font-size: 15px;
     }
 }
 
+@media (min-width: 600px){
+    .side-panel {
+        width: 45vw;
+        left: -47vw;
+        padding: 20px 15px;
+    }
+}
 
+@media (min-width: 830px){
+    .side-panel {
+        width: 33vw;
+        left: -35vw;
+        padding: 20px 15px;
+    }
+}
 
-
+@media (min-width: 1340px){
+    .side-panel {
+        width: 20vw;
+        left: -22vw;
+        padding: 20px 15px;
+    }
+}
