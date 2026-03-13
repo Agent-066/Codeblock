@@ -105,10 +105,11 @@
         return s_type == t_type;
     }
 
-    function update_get_element(blockId) {
+    function update_set_get_element(blockId) {
         let block = Main.blocks.find(b => b.id == blockId);
-        if (!block || block.type !== 'get_element') return;
-
+        let tpye = block.type;
+        if (!block || !(tpye === 'get_element' || tpye === 'set_element')) return;
+        
         let arrayInput = block.input.find(inp => inp.type === 'Array');
         if (!arrayInput) return;
 
@@ -120,12 +121,7 @@
             let sourceBlock = Main.blocks.find(b => b.id == conn.from_block);
             let sourceOut = sourceBlock.output.find(o => o.id == conn.from);
             if (sourceOut && sourceOut.type === 'Array') {
-                if (sourceBlock.type === 'variable') {
-                    let variable = Main.variables.find(v => v.id_block == sourceBlock.id);
-                    if (variable) elementType = variable.elementType;
-                    
-                }
-                else if (sourceBlock.type === 'get') {
+                if (sourceBlock.type === 'get') {
                     let varName = sourceBlock.data.varname;
                     let variable = Main.variables.find(v => v.name == varName);
                     if (variable) elementType = variable.elementType;
@@ -146,11 +142,14 @@
             if (variable) elementType = variable.elementType;
         }
 
+        if (tpye === 'get_element') temp = block.output[0];
+        else temp = block.input[2];
+
         if (elementType) {
-            let outPin = block.output[0];
-            if (outPin.type !== elementType) {
-                outPin.type = elementType;
-                let outEl = document.getElementById(outPin.id);
+            let Pin = temp;
+            if (Pin.type !== elementType) {
+                Pin.type = elementType;
+                let outEl = document.getElementById(Pin.id);
                 if (outEl) outEl.setAttribute('_type', elementType);
                 update_connected(block.id, elementType);
             }
@@ -313,14 +312,22 @@ else{
             inputs.forEach(inp => values.push(inp.value));
             i_block.data.values = values;
         }
-        else if (i_block.type === "get_element") {
+        else if (i_block.type === "get_element" || i_block.type === "set_element") {
             let input = e.target;
             let placeholder = input.placeholder;
             if (placeholder === "array") {
                 i_block.data.array = input.value;
-                update_get_element(i_block.id);
+                update_set_get_element(i_block.id);
             } else if (placeholder === "index") {
                 i_block.data.index = input.value;
+            }
+        }
+        else if (i_block.type === "for_loop") {
+            let input_ = e.target.value;
+            switch(e.target.placeholder){
+                case 'start': i_block.data.startIndex = Number(input_); break;
+                case 'end': i_block.data.endIndex = Number(input_); break;
+                case 'step': i_block.data.step = Number(input_); break;
             }
         }
         else{
@@ -498,47 +505,59 @@ else{
         functions[block.type]?.(id_to);
     }
 
-    function reverse_go_to(blockId, visited = new Set()){
-        if (visited.forEach(itm => {
-            if (itm === blockId) return true;
-        })){
-            show_ERR(`Обнаружен цикл в графе данных для блока с id ${blockId}`, blockId);
-            return null;
+    function reverse_go_to(blockId, path = new Set(), cache = new Map()){
+        if (cache.has(blockId)){
+            return cache.get(blockId);
         }
-        visited.add(blockId);
+
+        if (path.has(blockId)){
+            show_ERR(`Обнаружен цикл в графе данных для блока с id ${blockId}`, blockId);
+            return undefined;
+        }
+        path.add(blockId);
+
+        console.log(path)
 
         const block = Main.blocks.find(b => b.id == blockId);
-        if (!block) return null;
+        if (!block){
+            path.delete(blockId);
+            return null;
+        }
 
         const inp_values = [];
-        for (let inp of block.input){
+        for (let inp of block.input) {
             if (inp.type === 'Exec') continue;
-            if (inp.connection.length === 0){
+            if (inp.connection.length === 0) {
                 inp_values.push(undefined);
                 continue;
             }
             const conn = inp.connection[0];
             const s_blk_id = conn.from_block;
             const s_out_id = conn.from;
-            const s_value = reverse_go_to(s_blk_id, visited);
-            if (s_value === undefined){
+
+            let s_value = reverse_go_to(s_blk_id, path, cache);
+
+            if (s_value === undefined) {
                 console.error('Не удалось вычислить значение для блока с id', s_blk_id);
                 inp_values.push(undefined);
-            }
-            else{
+            } else {
                 const s_blk = Main.blocks.find(b => b.id == s_blk_id);
                 const out = s_blk.output.find(o => o.id == s_out_id);
                 if (out && functions[s_blk.type]){
                     const val = functions[s_blk.type](s_blk_id, s_value);
                     inp_values.push(val);
-                }
+                    }
                 else{
                     inp_values.push(undefined);
                 }
             }
         }
-        return inp_values;
-    }
+
+    path.delete(blockId);
+
+    cache.set(blockId, inp_values);
+    return inp_values;
+}
 
     // ---ФУНКЦИИ БЛОКОВ---
     const functions = {
@@ -559,7 +578,7 @@ else{
                 show_ERR(`Переменная "${varName}" не найдена`, _block.id);
                 return;
             }
-            let inp_values = reverse_go_to(id, new Set());
+            let inp_values = reverse_go_to(id, new Set(), new Map());
             let val_val = inp_values[0];
             if (val_val === undefined){
                 show_ERR('Не подано значение на вход блока Set', _block.id);
@@ -579,7 +598,7 @@ else{
         cout: (id) => {
             let block_info = Main.blocks.find(itm => itm.id == id);
             if (!block_info) return;
-            let value = reverse_go_to(id, new Set())[0];
+            let value = reverse_go_to(id, new Set(), new Map())[0];
             printToConsole(value);
         },
         get: (id) => {
@@ -750,7 +769,7 @@ else{
         branch: (id) => {
             let block = Main.blocks.find(b => b.id == id);
             if (!block) return;
-            let inputs = reverse_go_to(id, new Set());
+            let inputs = reverse_go_to(id, new Set(), new Map());
             let RC = (inputs && inputs.length > 0) ? inputs[0] : false;
             let C = Boolean(RC);
             let out = C ? block.output[0] : block.output[1];
@@ -763,7 +782,7 @@ else{
             if (arguments.length === 1){
                 // Вызов по Exec
                 let block = Main.blocks.find(b => b.id == id);
-                let vals = reverse_go_to(id, new Set());
+                let vals = reverse_go_to(id, new Set(), new Map());
                 let start = vals[0] !== undefined ? parseInt(vals[0]) : (block.data.startIndex !== null ? parseInt(block.data.startIndex) : 0);
                 let end = vals[1] !== undefined ? parseInt(vals[1]) : (block.data.endIndex !== null ? parseInt(block.data.endIndex) : 0);
                 let step = vals[2] !== undefined ? parseInt(vals[2]) : (block.data.step !== null ? parseInt(block.data.step) : 1);
@@ -773,8 +792,14 @@ else{
 
                 let outLoopBody = block.output[1];
                 let outCompleted = block.output[2];
+                
+                const iter_limit = 10000;
+                let cur_it = 0;
 
                 for (let i = start; (step > 0 ? i <= end : i >= end); i += step){
+                    if (cur_it >= iter_limit) {show_ERR(`Превышен лимит итераций (${iter_limit}) в цикле for. Возможно, условие никогда не станет ложным.`, id); break;}
+                    cur_it += 1;
+                    console.log(cur_it)
                     block.data.currentIndex = i;
                     if (outLoopBody.connection.length > 0){
                         go_to(outLoopBody.connection[0].to_block, id);
@@ -796,87 +821,94 @@ else{
                 let block = Main.blocks.find(b => b.id == id);
                 let outLoopBody = block.output[0]; // loop body
                 let outCompleted = block.output[1]; // completed
-                let condVals = reverse_go_to(id, new Set());
+                let condVals = reverse_go_to(id, new Set(), new Map());
                 let condition = toBoolean(condVals[0]);
+
+                const iter_limit = 10000;
+                let cur_it = 0
+
                 while (condition){
                     if (outLoopBody.connection.length > 0) go_to(outLoopBody.connection[0].to_block, id);
-                    condVals = reverse_go_to(id, new Set());
+                    if (cur_it >= iter_limit) {show_ERR(`Превышен лимит итераций (${iter_limit}) в цикле while. Возможно, условие никогда не станет ложным.`, id); break;}
+                    cur_it += 1;
+
+                    condVals = reverse_go_to(id, new Set(), new Map());
                     condition = toBoolean(condVals[0]);
-                    }
+                }
                 if (outCompleted.connection.length > 0) go_to(outCompleted.connection[0].to_block, id);
             }   
             else return null;
         },
 
-    get_element: function(id, values){
-        let arr = values[0];
-        let idx = parseInt(values[1]);
-        if (!Array.isArray(arr)){
-            show_ERR(`Первый вход Get Element должен быть массивом`, id);
-            return undefined;
+        get_element: function(id, values){
+            let arr = values[0];
+            let idx = parseInt(values[1]);
+            if (!Array.isArray(arr)){
+                show_ERR(`Первый вход Get Element должен быть массивом`, id);
+                return undefined;
+            }
+            if (isNaN(idx) || idx < 0 || idx >= arr.length){
+                show_ERR(`Индекс ${idx} вне диапазона массива`, id);
+                return undefined;
+            }
+            return arr[idx];
+        },
+
+        set_element: function(id, values){
+            let arr = values[0];
+            let idx = parseInt(values[1]);
+            let val = values[2];
+            if (!Array.isArray(arr)){
+                show_ERR(`Первый вход Set Element должен быть массивом`, id);
+                return arr;
+            }
+            if (isNaN(idx) || idx < 0 || idx >= arr.length){
+                show_ERR(`Индекс ${idx} вне диапазона массива`, id);
+                return arr;
+            }
+            arr[idx] = val;
+            return arr; // возвращаем тот же массив (изменённый)
+        },
+
+        array_length: function(id, values){
+            let arr = values[0];
+            if (!Array.isArray(arr)){
+                show_ERR(`Вход Array Length должен быть массивом`, id);
+                return 0;
+            }
+            return arr.length;
+        },
+
+        make_array: function(id, values){
+            // values - массив значений входов
+            return values.slice(); // копируем
+        },
+
+        append: function(id, values){
+            let arr = values[0];
+            let elem = values[1];
+            if (!Array.isArray(arr)){
+                show_ERR(`Первый вход Append должен быть массивом`, id);
+                return arr;
+            }
+            arr.push(elem);
+            return arr;
+        },
+
+        remove_index: function(id, values){
+            let arr = values[0];
+            let idx = parseInt(values[1]);
+            if (!Array.isArray(arr)){
+                show_ERR(`Первый вход Remove Index должен быть массивом`, id);
+                return arr;
+            }
+            if (isNaN(idx) || idx < 0 || idx >= arr.length){
+                show_ERR(`Индекс ${idx} вне диапазона массива`, id);
+                return arr;
+            }
+            arr.splice(idx, 1);
+            return arr;
         }
-        if (isNaN(idx) || idx < 0 || idx >= arr.length){
-            show_ERR(`Индекс ${idx} вне диапазона массива`, id);
-            return undefined;
-        }
-        return arr[idx];
-},
-
-set_element: function(id, values){
-    let arr = values[0];
-    let idx = parseInt(values[1]);
-    let val = values[2];
-    if (!Array.isArray(arr)){
-        show_ERR(`Первый вход Set Element должен быть массивом`, id);
-        return arr;
-    }
-    if (isNaN(idx) || idx < 0 || idx >= arr.length){
-        show_ERR(`Индекс ${idx} вне диапазона массива`, id);
-        return arr;
-    }
-    arr[idx] = val;
-    return arr; // возвращаем тот же массив (изменённый)
-},
-
-array_length: function(id, values){
-    let arr = values[0];
-    if (!Array.isArray(arr)){
-        show_ERR(`Вход Array Length должен быть массивом`, id);
-        return 0;
-    }
-    return arr.length;
-},
-
-make_array: function(id, values){
-    // values - массив значений входов
-    return values.slice(); // копируем
-},
-
-append: function(id, values){
-    let arr = values[0];
-    let elem = values[1];
-    if (!Array.isArray(arr)){
-        show_ERR(`Первый вход Append должен быть массивом`, id);
-        return arr;
-    }
-    arr.push(elem);
-    return arr;
-},
-
-remove_index: function(id, values){
-    let arr = values[0];
-    let idx = parseInt(values[1]);
-    if (!Array.isArray(arr)){
-        show_ERR(`Первый вход Remove Index должен быть массивом`, id);
-        return arr;
-    }
-    if (isNaN(idx) || idx < 0 || idx >= arr.length){
-        show_ERR(`Индекс ${idx} вне диапазона массива`, id);
-        return arr;
-    }
-    arr.splice(idx, 1);
-    return arr;
-}
     };
 
     // ---РАБОТА С ПИНАМИ---
@@ -929,11 +961,6 @@ remove_index: function(id, values){
 
             if (!compatible(t_1_b.type, t_2_b.type)){
                 show_ERR(`Несовместимые типы: ${t_1_b.type} и ${t_2_b.type}`, Main.block_2.id);
-                if (Main.TEMP_path) Main.TEMP_path.remove(); Main.TEMP_path = null;
-                if (Main.TEMP_circle) Main.TEMP_circle.remove(); Main.TEMP_circle = null;
-                document.querySelectorAll('.route-point[data-temp="true"]').forEach(p => p.remove());
-                Main.flag_1 = false;
-                Main.safe.classList.remove('connecting-mode');
                 return;
             }
 
@@ -988,10 +1015,10 @@ remove_index: function(id, values){
             Main.flag_1 = false;
             Main.safe.classList.remove('connecting-mode');
             
-            if (Main.block_2.type === 'get_element') {
+            if (Main.block_2.type === 'get_element' || Main.block_2.type === 'set_element') {
                 let targetIn = Main.block_2.input.find(inp => inp.id == t.id);
                 if (targetIn && targetIn.type === 'Array') {
-                    update_get_element(Main.block_2.id);
+                    update_set_get_element(Main.block_2.id);
                 }
             }
         }
@@ -1016,6 +1043,14 @@ remove_index: function(id, values){
             if (t.getAttribute("flag_ch") == "true"){
                 t.setAttribute("_type", "");
                 if (t_2_b) t_2_b.type = "";
+            }
+            if (t_2_b.type === "Array" && (block_2.type === 'set_element' || block_2.type === 'get_elements')){
+                if (block_2.type === 'set_element'){
+                    
+                }
+                else{
+
+                }
             }
         }
     }
@@ -1196,9 +1231,8 @@ remove_index: function(id, values){
             select.onclick = e => e.stopPropagation();
             select.onmousedown = e => e.stopPropagation();
             select.addEventListener("change", function(){
-        // Если это первый селект (тип)
-        console.log(index)
-        if (index === 0){
+                console.log(index)
+                if (index === 0){
             let type = this.value;
             let block = this.closest(".movable");
             let block_info = Main.blocks.find(itm => itm.id == block.id);
@@ -1218,21 +1252,21 @@ remove_index: function(id, values){
                     if (out) out.setAttribute("_type", type);
                 }
             }
-        }
-        else if (index === 1) {
-            let struct = this.value;
-            console.log(struct)
-            let block = this.closest(".movable");
-            let block_info = Main.blocks.find(itm => itm.id == block.id);
-            block_info.data.structure = struct;
-            let nameInput = block.querySelector('input[name="Var"]');
-            if (nameInput) {
-                let event = new Event('input', { bubbles: true });
-                nameInput.dispatchEvent(event);
-            }
-        }
-    })
-})
+                 }
+                else if (index === 1) {
+                    let struct = this.value;
+                    console.log(struct)
+                    let block = this.closest(".movable");
+                    let block_info = Main.blocks.find(itm => itm.id == block.id);
+                    block_info.data.structure = struct;
+                    let nameInput = block.querySelector('input[name="Var"]');
+                    if (nameInput) {
+                        let event = new Event('input', { bubbles: true });
+                        nameInput.dispatchEvent(event);
+                    }
+                }
+            })
+        })
 
         let in_t = c_t.querySelectorAll(".in");
         in_t.forEach(itm => {
@@ -1263,12 +1297,24 @@ remove_index: function(id, values){
 
         let inputs = c_t.querySelectorAll("input");
         inputs.forEach(input => {
+            if (c_t.getAttribute('block_type') === "Sum" || 
+                c_t.getAttribute('block_type') === 'multiplication' ||
+                c_t.getAttribute('block_type') === 'division' ||
+                c_t.getAttribute('block_type') === 'subtraction' ||
+                c_t.getAttribute('block_type') === 'modulo' ||
+                c_t.getAttribute('block_type') === 'for_loop'
+                ) input.type = 'number';
             input.onclick = e => e.stopPropagation();
             input.onmousedown = e => e.stopPropagation();
             input.setAttribute("id", "input_" + Main.blk_input_id);
             Main.blk_input_id += 1;
             input.addEventListener("input", funct_input);
         });
+
+        
+        if (c_t.getAttribute('block_type') === 'remove_index' ||
+            c_t.getAttribute('block_type') === 'get_element' ||
+            c_t.getAttribute('block_type') === 'set_element') inputs[1].type = 'number';
 
         if (['sum','multiplication','subtraction','division','or','and','make_array'].includes(c_t.getAttribute('block_type'))){
             let add_b = c_t.querySelector('.add');
@@ -1296,9 +1342,15 @@ remove_index: function(id, values){
                 }
                 else{
                     n_input = document.createElement('input');
-                    n_input.type = 'text';
                     n_input.style.width = '60px';
-                    n_input.placeholder = type === 'String' ? 'text' : 'number';
+                    if (type === 'String'){
+                        n_input.placeholder = 'text'
+                        n_input.type = 'text'
+                    }
+                    else{
+                        n_input.placeholder = 'number'
+                        n_input.type = 'number';
+                    }
                 }
                 n_input.id = 'input_' + Main.blk_input_id++;
                 n_input.onclick = e => e.stopPropagation();
@@ -1321,7 +1373,7 @@ remove_index: function(id, values){
             update_const('Integer');
         }
 
-        if (c_t.getAttribute('block_type') === 'get_element') {
+        if (c_t.getAttribute('block_type') === 'get_element' || c_t.getAttribute('block_type') === 'set_element') {
             let arrayInput = Array.from(c_t.querySelectorAll('input')).find(inp => inp.placeholder === 'array');
             if (arrayInput) {
                 arrayInput.setAttribute('list', 'global_datalist');
@@ -1599,7 +1651,7 @@ remove_index: function(id, values){
                 });
             });
         });
-    }
+    }   
 
     function setupBlockHandlers(el){
         const deleteBtn = el.querySelector('.delete-button, .delete-button_x');
@@ -1747,6 +1799,7 @@ remove_index: function(id, values){
 
         const saveBtn = document.createElement('button');
         saveBtn.id = 'save-btn';
+        saveBtn.width = "50%";
         saveBtn.className = 'contact-button';
         saveBtn.style.background = '#4CAF50';
         saveBtn.innerHTML = '💾 Сохранить';
@@ -1785,9 +1838,9 @@ remove_index: function(id, values){
         clearOutputBtn.id = 'clear-output-btn';
         clearOutputBtn.className = 'contact-button';
         clearOutputBtn.style.background = '#dc3545';
-        clearOutputBtn.innerHTML = '🗑 Очистить вывод';
+        clearOutputBtn.innerHTML = '🗑 Очистить консоль ошибок';
         clearOutputBtn.onclick = function(){
-            clearOutputConsole();
+            clear_ERR();
         };
 
         card.appendChild(saveBtn);
