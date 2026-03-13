@@ -246,8 +246,6 @@ else{
             let actualType = structure === "Array" ? "Array" : select_type;
             let elementType = structure === "Array" ? select_type : null;
 
-            console.log(structure)
-
             const regex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
             let valid_names = [];
             let errors = [];
@@ -312,14 +310,19 @@ else{
             inputs.forEach(inp => values.push(inp.value));
             i_block.data.values = values;
         }
-        else if (i_block.type === "get_element" || i_block.type === "set_element") {
+        else if (i_block.type === "get_element" || i_block.type === "set_element" || i_block.type == "remove_index") {
             let input = e.target;
             let placeholder = input.placeholder;
-            if (placeholder === "array") {
+            if (placeholder === "array" && i_block.type !== "remove_index") {
                 i_block.data.array = input.value;
                 update_set_get_element(i_block.id);
             } else if (placeholder === "index") {
-                i_block.data.index = input.value;
+                if (input.value < 0){
+                    show_ERR('Индекс не может принимать отрицательные значения', i_block.id)
+                }
+                else{
+                    i_block.data.index = input.value;
+                }
             }
         }
         else if (i_block.type === "for_loop") {
@@ -515,8 +518,6 @@ else{
             return undefined;
         }
         path.add(blockId);
-
-        console.log(path)
 
         const block = Main.blocks.find(b => b.id == blockId);
         if (!block){
@@ -780,6 +781,7 @@ else{
         },
         for_loop: function(id, values){
             if (arguments.length === 1){
+                console.log("asdasd")
                 // Вызов по Exec
                 let block = Main.blocks.find(b => b.id == id);
                 let vals = reverse_go_to(id, new Set(), new Map());
@@ -799,7 +801,6 @@ else{
                 for (let i = start; (step > 0 ? i <= end : i >= end); i += step){
                     if (cur_it >= iter_limit) {show_ERR(`Превышен лимит итераций (${iter_limit}) в цикле for. Возможно, условие никогда не станет ложным.`, id); break;}
                     cur_it += 1;
-                    console.log(cur_it)
                     block.data.currentIndex = i;
                     if (outLoopBody.connection.length > 0){
                         go_to(outLoopBody.connection[0].to_block, id);
@@ -1231,7 +1232,6 @@ else{
             select.onclick = e => e.stopPropagation();
             select.onmousedown = e => e.stopPropagation();
             select.addEventListener("change", function(){
-                console.log(index)
                 if (index === 0){
             let type = this.value;
             let block = this.closest(".movable");
@@ -1255,7 +1255,6 @@ else{
                  }
                 else if (index === 1) {
                     let struct = this.value;
-                    console.log(struct)
                     let block = this.closest(".movable");
                     let block_info = Main.blocks.find(itm => itm.id == block.id);
                     block_info.data.structure = struct;
